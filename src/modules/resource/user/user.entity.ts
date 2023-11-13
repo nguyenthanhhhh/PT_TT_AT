@@ -25,7 +25,7 @@ export class User {
   public lastName: string;
 
   @Column({ nullable: false })
-  public role: boolean;
+  public isAdmin: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   public isDeleted: boolean;

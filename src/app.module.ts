@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { loadConfig } from './config';
 import { DatabaseModule } from './modules/resource/database/database.module';
+import { CmsModule } from './modules/aggregators/cms/cms.module';
+import { AuthModule } from './modules/aggregators/auth/auth.module';
 
 @Module({
-  imports: [loadConfig(), DatabaseModule],
+  imports: [loadConfig(), DatabaseModule, CmsModule, AuthModule],
 })
 export class AppModule {}
