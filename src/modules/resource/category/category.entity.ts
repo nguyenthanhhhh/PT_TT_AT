@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Category {
@@ -10,4 +17,22 @@ export class Category {
 
   @Column({ nullable: false })
   public quantity: number;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  public isDeleted: boolean;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  public createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
+  public updatedAt: Date;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updatedAt = new Date();
+  }
 }

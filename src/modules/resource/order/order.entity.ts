@@ -1,9 +1,13 @@
 import {
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Shoes } from '../shoes/shoes.entity';
@@ -13,13 +17,12 @@ export class Order {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: number;
+  @ManyToOne(() => User, (user) => user.order)
+  user: User;
 
   @OneToOne(() => Shoes)
   @JoinColumn()
-  shoes: number;
+  shoes: Shoes;
 
   @Column({ nullable: false })
   public size: number;
@@ -35,4 +38,22 @@ export class Order {
 
   @Column({ nullable: false })
   public isVerify: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  public isDeleted: boolean;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  public createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
+  public updatedAt: Date;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updatedAt = new Date();
+  }
 }

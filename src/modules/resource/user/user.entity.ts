@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Order } from '../order/order.entity';
+import { Cart } from '../cart/cart.entity';
 
 @Entity()
 export class User {
@@ -26,6 +29,12 @@ export class User {
 
   @Column({ nullable: false })
   public isAdmin: boolean;
+
+  @OneToMany(() => Order, (order) => order.user)
+  order: Order[];
+
+  @OneToMany(() => Cart, (cart) => cart.user)
+  cart: Cart[];
 
   @Column({ nullable: false, type: 'boolean', default: false })
   public isDeleted: boolean;

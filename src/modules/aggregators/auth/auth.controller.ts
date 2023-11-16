@@ -15,6 +15,14 @@ export class AuthController {
   })
   @ApiBody({
     type: LoginData,
+    examples: {
+      example1: {
+        value: {
+          username: 'admin',
+          password: '123A@a',
+        },
+      },
+    },
   })
   async login(@Body() loginData: LoginData) {
     return this.userService.login(loginData);

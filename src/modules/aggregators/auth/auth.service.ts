@@ -53,7 +53,7 @@ export class AuthService implements OnModuleInit {
       return user;
     } catch (error) {
       throw new HttpException(
-        `[AuthService]: err : ${error}`,
+        `[AuthService] err : ${error}`,
         HttpStatus.UNAUTHORIZED,
       );
     }

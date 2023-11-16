@@ -1,4 +1,14 @@
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '../user/user.entity';
 import { Order } from '../order/order.entity';
 
@@ -7,11 +17,28 @@ export class Cart {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: number;
+  @ManyToOne(() => User, (user) => user.cart)
+  user: User;
 
   @OneToOne(() => Order)
   @JoinColumn()
-  order: number;
+  order: Order;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  public isDeleted: boolean;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  public createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
+  public updatedAt: Date;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updatedAt = new Date();
+  }
 }

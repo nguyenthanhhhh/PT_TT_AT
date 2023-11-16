@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
+import { Order } from '../order/order.entity';
+import { Cart } from '../cart/cart.entity';
 dotenv.config();
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Order, Cart]),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
