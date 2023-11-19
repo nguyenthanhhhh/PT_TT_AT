@@ -64,6 +64,37 @@ export class UserService {
     }
   }
 
+  async registerUser(registerData: RegisterAdminData) {
+    try {
+      const checkExist = await this.getUserByUsername(registerData.username);
+      if (checkExist)
+        throw new HttpException(
+          'Username is already exists!',
+          HttpStatus.CONFLICT,
+        );
+
+      registerData.password = await bcrypt.hash(registerData.password, salt);
+
+      const adminUser = this.userRepository.create({
+        username: registerData.username,
+        password: registerData.password,
+        firstName: registerData.firstName,
+        lastName: registerData.lastName,
+        isAdmin: false,
+      });
+
+      await this.userRepository.save({
+        ...adminUser,
+        isAdmin: true,
+      });
+
+      return adminUser;
+    } catch (error) {
+      console.log('[registerAdminUser] err: ', error);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async login(loginData: LoginData) {
     try {
       const { username, password } = loginData;

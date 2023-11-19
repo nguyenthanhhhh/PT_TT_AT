@@ -18,6 +18,9 @@ export class Shoes {
   public id: number;
 
   @Column({ nullable: false })
+  public name: string;
+
+  @Column({ nullable: false })
   public price: number;
 
   @OneToOne(() => Category)

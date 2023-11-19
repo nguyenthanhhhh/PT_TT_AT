@@ -14,6 +14,12 @@ export class GetCmsShoesData extends PaginationQueriesDto {
 
 export class CreateCmsShoesData {
   @ApiProperty({
+    type: String,
+  })
+  @IsNumber()
+  name: string;
+
+  @ApiProperty({
     type: Number,
   })
   @IsNumber()
@@ -57,6 +63,12 @@ export class CreateCmsShoesData {
 }
 
 export class UpdateCmsShoesData {
+  @ApiProperty({
+    type: String,
+  })
+  @IsNumber()
+  name: string;
+
   @ApiProperty({
     type: Number,
   })

@@ -133,4 +133,25 @@ export class CmsController {
   async deleteShoesCms(@Param() param) {
     return this.cmsService.deleteShoes(param.id);
   }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Post('shoesRefSize')
+  @ApiBearerAuth()
+  async createShoesRefSizeCms(@Body() body) {
+    return this.cmsService.createShoesRefSize(body);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Patch('shoesRefSize/:id')
+  @ApiBearerAuth()
+  async updateShoesRefSizeCms(@Param() param, @Body() body) {
+    return this.cmsService.updateShoesRefSize(param.id, body);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Delete('shoesRefSize/:id')
+  @ApiBearerAuth()
+  async deleteShoesRefSizeCms(@Param() param) {
+    return this.cmsService.deleteShoesRefSize(param.id);
+  }
 }

@@ -8,5 +8,6 @@ import { Shoes } from '../shoes/shoes.entity';
   imports: [TypeOrmModule.forFeature([ShoesRefSize, Shoes])],
   controllers: [],
   providers: [ShoesRefSizeService],
+  exports: [ShoesRefSizeService],
 })
 export class ShoesRefSizeModule {}

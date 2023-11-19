@@ -2,27 +2,30 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Shoes } from './shoes.entity';
+import { pick } from 'lodash';
 import {
   CreateCmsShoesData,
   GetCmsShoesData,
   UpdateCmsShoesData,
 } from './dto/request.dto';
-import { pick } from 'lodash';
 import {
   LIMIT_DEFAULT,
   OFFSET_DEFAULT,
 } from '../../../common/const/general.const';
+import { Category } from '../category/category.entity';
 
 @Injectable()
 export class ShoesService {
   constructor(
     @InjectRepository(Shoes)
     private readonly shoesRepository: Repository<Shoes>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async getListShoesForCms(getCmsShoesData: GetCmsShoesData) {
     try {
-      const filterQuery = {};
+      const filterQuery = { isDeleted: false };
 
       const take = Number(getCmsShoesData?.limit || LIMIT_DEFAULT);
       const skip = Number(getCmsShoesData?.offset || OFFSET_DEFAULT);
@@ -34,6 +37,7 @@ export class ShoesService {
         where: filterQuery,
         relations: {
           category: true,
+          refSizes: true,
         },
         take,
         skip,
@@ -47,25 +51,37 @@ export class ShoesService {
   }
 
   async getShoesDetailForCms(shoesId: number) {
-    try {
-      const shoes = await this.shoesRepository.findOne({
-        where: { id: shoesId },
-      });
+    const shoes = await this.shoesRepository.findOne({
+      where: {
+        id: shoesId,
+        isDeleted: false,
+      },
+    });
 
-      if (!shoes) {
-        throw new HttpException('Shoes not found', HttpStatus.NOT_FOUND);
-      }
+    if (!shoes)
+      throw new HttpException('Shoes not found', HttpStatus.NOT_FOUND);
 
-      return shoes;
-    } catch (error) {
-      console.log('[getShoesDetailForCms] err: ', error);
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
+    return shoes;
   }
 
   async createShoesCms(createShoesData: CreateCmsShoesData) {
     try {
-      const newShoes = this.shoesRepository.create(createShoesData);
+      const category = await this.categoryRepository.findOne({
+        where: { id: createShoesData.categoryId },
+      });
+      const newShoes = this.shoesRepository.create({
+        ...pick(
+          createShoesData,
+          'company',
+          'isBetterSell',
+          'isNewArrival',
+          'material',
+          'name',
+          'price',
+          'vendor',
+        ),
+        category,
+      });
       await this.shoesRepository.save(newShoes);
 
       return this.getShoesDetailForCms(newShoes.id);

@@ -10,12 +10,18 @@ import {
   UpdateCmsShoesData,
 } from '../../resource/shoes/dto/request.dto';
 import { ShoesService } from '../../resource/shoes/shoes.service';
+import {
+  CreateShoesRefSizeData,
+  UpdateShoesRefSizeData,
+} from '../../resource/shoes-ref-size/dto/request.dto';
+import { ShoesRefSizeService } from '../../resource/shoes-ref-size/shoesRefSize.service';
 
 @Injectable()
 export class CmsService {
   constructor(
     private readonly userService: UserService,
     private readonly shoesService: ShoesService,
+    private readonly shoesRefSizeService: ShoesRefSizeService,
   ) {}
 
   async registerAdminUsers(createAdminData: RegisterAdminData) {
@@ -53,7 +59,23 @@ export class CmsService {
     return this.shoesService.deleteShoesCms(shoesId);
   }
 
-  getHello() {
-    return 'Hello';
+  async createShoesRefSize(createShoesRefSizeData: CreateShoesRefSizeData) {
+    return this.shoesRefSizeService.createShoesRefSizeCms(
+      createShoesRefSizeData,
+    );
+  }
+
+  async updateShoesRefSize(
+    shoesRefSizeId: number,
+    updateShoesRefSizeData: UpdateShoesRefSizeData,
+  ) {
+    return this.shoesRefSizeService.updateShoesRefSizeCms(
+      shoesRefSizeId,
+      updateShoesRefSizeData,
+    );
+  }
+
+  async deleteShoesRefSize(shoesRefSizeId: number) {
+    return this.shoesRefSizeService.deleteShoesRefSizeCms(shoesRefSizeId);
   }
 }

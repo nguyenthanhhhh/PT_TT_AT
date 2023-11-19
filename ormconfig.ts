@@ -1,5 +1,5 @@
-import { DataSource } from 'typeorm';
 import 'dotenv/config';
+import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 
