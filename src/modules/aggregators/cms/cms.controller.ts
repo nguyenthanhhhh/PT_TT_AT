@@ -28,15 +28,49 @@ import { AuthorAdminGuard } from '../auth/author-admin.guard';
 import {
   CreateCmsShoesData,
   GetCmsShoesData,
+  UpdateCmsShoesData,
 } from '../../resource/shoes/dto/request.dto';
 import { GetListShoesCmsData } from './dto/response.dto';
 import { PaginationQueriesDto } from '../../../common/dto/pagination.dto';
 import { GetShoesData } from '../../resource/shoes/dto/response.dto';
+import {
+  CreateCategoryData,
+  GetCmsCategoryData,
+  UpdateCategoryData,
+} from '../../resource/category/dto/request.dto';
+import {
+  CreateShoesRefSizeData,
+  UpdateShoesRefSizeData,
+} from '../../resource/shoes-ref-size/dto/request.dto';
 
 @ApiTags('Cms')
 @Controller('cms')
 export class CmsController {
   constructor(private readonly cmsService: CmsService) {}
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('users')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Get list User for CMS',
+  })
+  @ApiQuery({
+    type: PaginationQueriesDto,
+  })
+  async getListUserForCms() {
+    return this.cmsService.getListUserCms();
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('users/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Get User detail for CMS',
+  })
+  @ApiParam({ name: 'id', description: 'User id', required: true })
+  async getUserDetailForCms(@Param() params) {
+    return this.cmsService.getUserDetailCms(Number(params.id));
+  }
 
   @Post('registers')
   @ApiCreatedResponse({
@@ -109,21 +143,21 @@ export class CmsController {
   @Post('shoes')
   @ApiBearerAuth()
   @ApiOkResponse({
-    type: GetShoesData,
     description: 'Create success',
   })
   @ApiBody({
     type: CreateCmsShoesData,
     description: 'Create Shoes cms',
   })
-  async createShoesCms(@Body() body) {
+  async createShoesCms(@Body() body: CreateCmsShoesData) {
+    console.log(body);
     return this.cmsService.createShoes(body);
   }
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Patch('shoes/:id')
   @ApiBearerAuth()
-  async updateShoesCms(@Param() param, @Body() body) {
+  async updateShoesCms(@Param() param, @Body() body: UpdateCmsShoesData) {
     return this.cmsService.updateShoes(param.id, body);
   }
 
@@ -137,14 +171,17 @@ export class CmsController {
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Post('shoesRefSize')
   @ApiBearerAuth()
-  async createShoesRefSizeCms(@Body() body) {
+  async createShoesRefSizeCms(@Body() body: CreateShoesRefSizeData) {
     return this.cmsService.createShoesRefSize(body);
   }
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Patch('shoesRefSize/:id')
   @ApiBearerAuth()
-  async updateShoesRefSizeCms(@Param() param, @Body() body) {
+  async updateShoesRefSizeCms(
+    @Param() param,
+    @Body() body: UpdateShoesRefSizeData,
+  ) {
     return this.cmsService.updateShoesRefSize(param.id, body);
   }
 
@@ -153,5 +190,61 @@ export class CmsController {
   @ApiBearerAuth()
   async deleteShoesRefSizeCms(@Param() param) {
     return this.cmsService.deleteShoesRefSize(param.id);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('categories')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    type: GetListShoesCmsData,
+    description: 'Get list Category for CMS',
+  })
+  @ApiQuery({
+    type: PaginationQueriesDto,
+  })
+  async getListCategoryForCms(getCmsCategoryData: GetCmsCategoryData) {
+    return this.cmsService.getListCategory(getCmsCategoryData);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('categories/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    type: GetShoesData,
+    description: 'Get Category detail for CMS',
+  })
+  @ApiParam({ name: 'id', description: 'Category id', required: true })
+  async getCategoryDetailForCms(@Param() params) {
+    return this.cmsService.getCategoryDetail(params.id);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Post('categories')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Create Category for CMS',
+  })
+  async createCategoryForCms(@Body() body: CreateCategoryData) {
+    return this.cmsService.createCategory(body);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Patch('categories/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Update Category for CMS',
+  })
+  async updateCategoryForCms(@Param() param, @Body() body: UpdateCategoryData) {
+    return this.cmsService.updateCategory(Number(param.id), body);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Delete('categories/:id')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Delete Category for CMS',
+  })
+  async deleteCategoryForCms(@Param() param) {
+    return this.cmsService.deleteCategory(Number(param.id));
   }
 }

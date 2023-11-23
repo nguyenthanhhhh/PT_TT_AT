@@ -15,6 +15,12 @@ import {
   UpdateShoesRefSizeData,
 } from '../../resource/shoes-ref-size/dto/request.dto';
 import { ShoesRefSizeService } from '../../resource/shoes-ref-size/shoesRefSize.service';
+import {
+  CreateCategoryData,
+  GetCmsCategoryData,
+  UpdateCategoryData,
+} from '../../resource/category/dto/request.dto';
+import { CategoryService } from '../../resource/category/category.service';
 
 @Injectable()
 export class CmsService {
@@ -22,7 +28,16 @@ export class CmsService {
     private readonly userService: UserService,
     private readonly shoesService: ShoesService,
     private readonly shoesRefSizeService: ShoesRefSizeService,
+    private readonly categoryService: CategoryService,
   ) {}
+
+  async getListUserCms() {
+    return this.userService.getListUserCms();
+  }
+
+  async getUserDetailCms(userId: number) {
+    return this.userService.getUserDetailCms(userId);
+  }
 
   async registerAdminUsers(createAdminData: RegisterAdminData) {
     return this.userService.registerAdminUser(createAdminData);
@@ -40,11 +55,11 @@ export class CmsService {
   }
 
   async getListShoes(getCmsShoesData: GetCmsShoesData) {
-    return this.shoesService.getListShoesForCms(getCmsShoesData);
+    return this.shoesService.getListShoesCms(getCmsShoesData);
   }
 
   async getShoesDetail(shoesId: number) {
-    return this.shoesService.getShoesDetailForCms(shoesId);
+    return this.shoesService.getShoesDetail(shoesId);
   }
 
   async createShoes(createShoesData: CreateCmsShoesData) {
@@ -77,5 +92,31 @@ export class CmsService {
 
   async deleteShoesRefSize(shoesRefSizeId: number) {
     return this.shoesRefSizeService.deleteShoesRefSizeCms(shoesRefSizeId);
+  }
+
+  async getListCategory(getCmsCategoryData: GetCmsCategoryData) {
+    return this.categoryService.getListCategoryCms(getCmsCategoryData);
+  }
+
+  async getCategoryDetail(categoryId: number) {
+    return this.categoryService.getCategoryDetail(categoryId);
+  }
+
+  async createCategory(createCategoryData: CreateCategoryData) {
+    return this.categoryService.createCategoryCms(createCategoryData);
+  }
+
+  async updateCategory(
+    categoryId: number,
+    updateCategoryData: UpdateCategoryData,
+  ) {
+    return this.categoryService.updateCategoryCms(
+      categoryId,
+      updateCategoryData,
+    );
+  }
+
+  async deleteCategory(categoryId: number) {
+    return this.categoryService.deleteCategoryCms(categoryId);
   }
 }

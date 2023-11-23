@@ -18,7 +18,7 @@ export class ShoesRefSizeService {
     private readonly shoesRepository: Repository<Shoes>,
   ) {}
 
-  async getShoesRefSizeDetailForCms(shoesRefSizeId: number) {
+  async getShoesRefSizeDetail(shoesRefSizeId: number) {
     const shoesRefSize = await this.shoesRefSizeRepository.findOne({
       where: {
         id: shoesRefSizeId,
@@ -59,25 +59,25 @@ export class ShoesRefSizeService {
     });
 
     await this.shoesRefSizeRepository.save(shoesRefSize);
-    return this.getShoesRefSizeDetailForCms(shoesRefSize.id);
+    return this.getShoesRefSizeDetail(shoesRefSize.id);
   }
 
   async updateShoesRefSizeCms(
     shoesRefSizeId: number,
     updateShoesRefSizeData: UpdateShoesRefSizeData,
   ) {
-    const shoesRefSize = await this.getShoesRefSizeDetailForCms(shoesRefSizeId);
+    const shoesRefSize = await this.getShoesRefSizeDetail(shoesRefSizeId);
 
     await this.shoesRefSizeRepository.update(
       shoesRefSize.id,
       updateShoesRefSizeData,
     );
 
-    return this.getShoesRefSizeDetailForCms(shoesRefSize.id);
+    return this.getShoesRefSizeDetail(shoesRefSize.id);
   }
 
   async deleteShoesRefSizeCms(shoesRefSizeId: number) {
-    const shoesRefSize = await this.getShoesRefSizeDetailForCms(shoesRefSizeId);
+    const shoesRefSize = await this.getShoesRefSizeDetail(shoesRefSizeId);
 
     await this.shoesRefSizeRepository.update(shoesRefSize.id, {
       isDeleted: true,

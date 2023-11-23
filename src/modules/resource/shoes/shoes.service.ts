@@ -23,7 +23,7 @@ export class ShoesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async getListShoesForCms(getCmsShoesData: GetCmsShoesData) {
+  async getListShoesCms(getCmsShoesData: GetCmsShoesData) {
     try {
       const filterQuery = { isDeleted: false };
 
@@ -41,20 +41,27 @@ export class ShoesService {
         },
         take,
         skip,
+        order: {
+          id: 'ASC',
+        },
       });
 
       return { total, limit: take, offset: skip, data: shoes };
     } catch (error) {
-      console.log('[getListShoesForCms] err: ', error);
+      console.log('[getListShoes] err: ', error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async getShoesDetailForCms(shoesId: number) {
+  async getShoesDetail(shoesId: number) {
     const shoes = await this.shoesRepository.findOne({
       where: {
         id: shoesId,
         isDeleted: false,
+      },
+      relations: {
+        category: true,
+        refSizes: true,
       },
     });
 
@@ -84,7 +91,7 @@ export class ShoesService {
       });
       await this.shoesRepository.save(newShoes);
 
-      return this.getShoesDetailForCms(newShoes.id);
+      return this.getShoesDetail(newShoes.id);
     } catch (error) {
       console.log('[createShoesCms] err: ', error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,16 +99,38 @@ export class ShoesService {
   }
 
   async updateShoesCms(shoesId: number, updateShoesData: UpdateCmsShoesData) {
-    const shoes = await this.getShoesDetailForCms(shoesId);
+    const shoes = await this.getShoesDetail(shoesId);
 
     await this.shoesRepository.update(shoes.id, updateShoesData);
-    return this.getShoesDetailForCms(shoes.id);
+    return this.getShoesDetail(shoes.id);
   }
 
   async deleteShoesCms(shoesId: number) {
-    const shoes = await this.getShoesDetailForCms(shoesId);
+    const shoes = await this.getShoesDetail(shoesId);
 
     await this.shoesRepository.update(shoes.id, { isDeleted: true });
     return true;
+  }
+
+  async getListShoes() {
+    try {
+      const shoes = await this.shoesRepository.find({
+        where: {
+          isDeleted: false,
+        },
+        relations: {
+          refSizes: true,
+          category: true,
+        },
+      });
+
+      return shoes;
+    } catch (error) {
+      console.log('[getListShoes] error: ', error);
+      throw new HttpException(
+        'INTERNAL SERVER ERROR',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

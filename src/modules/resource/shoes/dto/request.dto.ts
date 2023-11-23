@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationQueriesDto } from '../../../../common/dto/pagination.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -16,7 +16,7 @@ export class CreateCmsShoesData {
   @ApiProperty({
     type: String,
   })
-  @IsNumber()
+  @IsString()
   name: string;
 
   @ApiProperty({
@@ -46,13 +46,13 @@ export class CreateCmsShoesData {
   @ApiProperty({
     type: Boolean,
   })
-  @IsString()
+  @IsBoolean()
   isBetterSell: boolean;
 
   @ApiProperty({
     type: Boolean,
   })
-  @IsString()
+  @IsBoolean()
   isNewArrival: boolean;
 
   @ApiProperty({
@@ -60,6 +60,13 @@ export class CreateCmsShoesData {
   })
   @IsNumber()
   categoryId: number;
+
+  @ApiProperty({
+    type: String,
+    required: false,
+  })
+  @IsString()
+  image: string;
 }
 
 export class UpdateCmsShoesData {
@@ -117,4 +124,12 @@ export class UpdateCmsShoesData {
   @IsNumber()
   @IsOptional()
   categoryId: number;
+
+  @ApiProperty({
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  image: string;
 }

@@ -7,6 +7,10 @@ import { ChangePasswordData, RegisterAdminData } from './dto/request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoginData } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import {
+  LIMIT_DEFAULT,
+  OFFSET_DEFAULT,
+} from '../../../common/const/general.const';
 
 @Injectable()
 export class UserService {
@@ -15,6 +19,31 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
+  async getListUserCms() {
+    const take = LIMIT_DEFAULT;
+    const skip = OFFSET_DEFAULT;
+    const [users, total] = await this.userRepository.findAndCount({
+      where: {
+        isDeleted: false,
+      },
+      take,
+      skip,
+    });
+
+    return { total, limit: take, offset: skip, data: users };
+  }
+
+  async getUserDetailCms(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        isDeleted: false,
+      },
+    });
+
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return user;
+  }
 
   async getUserByUsername(username: string) {
     try {
@@ -52,10 +81,7 @@ export class UserService {
         isAdmin: true,
       });
 
-      await this.userRepository.save({
-        ...adminUser,
-        isAdmin: true,
-      });
+      await this.userRepository.save(adminUser);
 
       return adminUser;
     } catch (error) {
@@ -75,7 +101,7 @@ export class UserService {
 
       registerData.password = await bcrypt.hash(registerData.password, salt);
 
-      const adminUser = this.userRepository.create({
+      const user = this.userRepository.create({
         username: registerData.username,
         password: registerData.password,
         firstName: registerData.firstName,
@@ -83,14 +109,11 @@ export class UserService {
         isAdmin: false,
       });
 
-      await this.userRepository.save({
-        ...adminUser,
-        isAdmin: true,
-      });
+      await this.userRepository.save(user);
 
-      return adminUser;
+      return user;
     } catch (error) {
-      console.log('[registerAdminUser] err: ', error);
+      console.log('[registerUser] err: ', error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

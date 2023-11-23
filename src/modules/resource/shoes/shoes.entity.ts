@@ -3,9 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -23,8 +22,7 @@ export class Shoes {
   @Column({ nullable: false })
   public price: number;
 
-  @OneToOne(() => Category)
-  @JoinColumn()
+  @ManyToOne(() => Category, (category) => category.shoes)
   public category: Category;
 
   @Column({ nullable: true })
@@ -41,6 +39,9 @@ export class Shoes {
 
   @Column({ nullable: false })
   public isNewArrival: boolean;
+
+  @Column({ nullable: true })
+  public image: string;
 
   @OneToMany(() => ShoesRefSize, (refSize) => refSize.shoes)
   refSizes: ShoesRefSize[];

@@ -6,9 +6,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
 import { ShoesModule } from '../../resource/shoes/shoes.module';
 import { ShoesRefSizeModule } from '../../resource/shoes-ref-size/shoesRefSize.module';
+import { CategoryModule } from '../../resource/category/category.module';
 
 @Module({
-  imports: [UserModule, JwtModule, AuthModule, ShoesModule, ShoesRefSizeModule],
+  imports: [
+    UserModule,
+    JwtModule,
+    AuthModule,
+    ShoesModule,
+    ShoesRefSizeModule,
+    CategoryModule,
+  ],
   controllers: [CmsController],
   providers: [CmsService],
 })
