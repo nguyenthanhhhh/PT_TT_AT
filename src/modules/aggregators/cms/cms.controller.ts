@@ -150,7 +150,6 @@ export class CmsController {
     description: 'Create Shoes cms',
   })
   async createShoesCms(@Body() body: CreateCmsShoesData) {
-    console.log(body);
     return this.cmsService.createShoes(body);
   }
 
