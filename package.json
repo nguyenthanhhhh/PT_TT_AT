@@ -1,11 +1,12 @@
 {
-   "name": "nft-marketplace",
+   "name": "shoes-zone",
    "version": "0.0.1",
    "description": "",
    "author": "",
    "private": true,
    "license": "UNLICENSED",
    "scripts": {
+      "pre-build": "npm install",
       "build": "nest build",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "TZ=UTC nest start",
