@@ -20,7 +20,8 @@
       "migration:generate": "npm run typeorm migration:generate ./src/migrations/$npm_config_name",
       "migration:create": "npm run typeorm migration:create ./src/migrations/$npm_config_name",
       "migration:revert": "npm run typeorm migration:revert",
-      "migration:run": "npm run typeorm migration:run"
+      "migration:run": "npm run typeorm migration:run",
+      "rimraf": "./node_modules/rimraf/bin.js"
    },
    "dependencies": {
       "@nestjs/axios": "^1.0.0",
