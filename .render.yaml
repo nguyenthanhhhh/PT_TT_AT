@@ -1,0 +1,3 @@
+buildCommand:
+  - nvm install
+  - npm run build
