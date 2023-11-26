@@ -6,8 +6,7 @@
    "private": true,
    "license": "UNLICENSED",
    "scripts": {
-      "pre-build": "npm install",
-      "build": "nest build",
+      "build": "yarn install && export PATH=\"$PATH:$(pwd)/node_modules/@nestjs/cli/bin\"",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "TZ=UTC nest start",
       "start:dev": "TZ=UTC nest start --watch",
