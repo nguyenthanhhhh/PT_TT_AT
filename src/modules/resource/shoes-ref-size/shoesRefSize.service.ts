@@ -34,7 +34,7 @@ export class ShoesRefSizeService {
 
   async createShoesRefSizeCms(createShoesRefSizeData: CreateShoesRefSizeData) {
     const shoes = await this.shoesRepository.findOne({
-      where: { id: createShoesRefSizeData.shoesId },
+      where: { id: createShoesRefSizeData.shoesId, isDeleted: false },
     });
 
     if (!shoes)
@@ -44,6 +44,7 @@ export class ShoesRefSizeService {
       where: {
         shoes: { id: shoes.id },
         size: createShoesRefSizeData.size,
+        isDeleted: false,
       },
     });
 

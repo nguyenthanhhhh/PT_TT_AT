@@ -197,6 +197,7 @@ export class UserService {
         where: {
           id: adminId,
           isAdmin: true,
+          isDeleted: false,
         },
       });
 

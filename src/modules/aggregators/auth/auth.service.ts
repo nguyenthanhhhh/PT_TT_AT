@@ -41,6 +41,7 @@ export class AuthService implements OnModuleInit {
       const user = await this.userRepository.findOne({
         where: {
           username: payload.username,
+          isDeleted: false,
         },
       });
 

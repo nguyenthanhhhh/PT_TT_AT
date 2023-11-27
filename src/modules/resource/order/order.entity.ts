@@ -3,9 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,8 +18,7 @@ export class Order {
   @ManyToOne(() => User, (user) => user.order)
   user: User;
 
-  @OneToOne(() => Shoes)
-  @JoinColumn()
+  @ManyToOne(() => Shoes, (shoes) => shoes.order)
   shoes: Shoes;
 
   @Column({ nullable: false })
@@ -38,6 +35,9 @@ export class Order {
 
   @Column({ nullable: false })
   public isVerify: boolean;
+
+  @Column({ nullable: true, default: false })
+  public inCart: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   public isDeleted: boolean;

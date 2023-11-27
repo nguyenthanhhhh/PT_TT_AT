@@ -246,4 +246,10 @@ export class CmsController {
   async deleteCategoryForCms(@Param() param) {
     return this.cmsService.deleteCategory(Number(param.id));
   }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('orders')
+  async getOrder() {
+    return this.cmsService.getOrder();
+  }
 }

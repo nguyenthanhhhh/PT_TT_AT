@@ -21,6 +21,7 @@ import {
   UpdateCategoryData,
 } from '../../resource/category/dto/request.dto';
 import { CategoryService } from '../../resource/category/category.service';
+import { OrderService } from '../../resource/order/order.service';
 
 @Injectable()
 export class CmsService {
@@ -29,6 +30,7 @@ export class CmsService {
     private readonly shoesService: ShoesService,
     private readonly shoesRefSizeService: ShoesRefSizeService,
     private readonly categoryService: CategoryService,
+    private readonly orderService: OrderService,
   ) {}
 
   async getListUserCms() {
@@ -118,5 +120,9 @@ export class CmsService {
 
   async deleteCategory(categoryId: number) {
     return this.categoryService.deleteCategoryCms(categoryId);
+  }
+
+  async getOrder() {
+    return this.orderService.getOrderCms();
   }
 }

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ShoesRefSize } from '../shoes-ref-size/shoesRefSize.entity';
 import { Category } from '../category/category.entity';
+import { Order } from '../order/order.entity';
 
 @Entity()
 export class Shoes {
@@ -45,6 +46,9 @@ export class Shoes {
 
   @OneToMany(() => ShoesRefSize, (refSize) => refSize.shoes)
   refSizes: ShoesRefSize[];
+
+  @OneToMany(() => Order, (order) => order.shoes)
+  order: Order[];
 
   @Column({ nullable: false, type: 'boolean', default: false })
   public isDeleted: boolean;

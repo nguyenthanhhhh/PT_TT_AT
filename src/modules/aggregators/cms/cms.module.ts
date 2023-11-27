@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ShoesModule } from '../../resource/shoes/shoes.module';
 import { ShoesRefSizeModule } from '../../resource/shoes-ref-size/shoesRefSize.module';
 import { CategoryModule } from '../../resource/category/category.module';
+import { OrderModule } from '../../resource/order/order.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CategoryModule } from '../../resource/category/category.module';
     ShoesModule,
     ShoesRefSizeModule,
     CategoryModule,
+    OrderModule,
   ],
   controllers: [CmsController],
   providers: [CmsService],
