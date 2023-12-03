@@ -74,7 +74,7 @@ export class ShoesService {
   async createShoesCms(createShoesData: CreateCmsShoesData) {
     try {
       const category = await this.categoryRepository.findOne({
-        where: { id: createShoesData.categoryId, isDeleted: false },
+        where: { id: Number(createShoesData.categoryId), isDeleted: false },
       });
       const newShoes = this.shoesRepository.create({
         ...pick(

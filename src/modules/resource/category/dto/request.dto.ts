@@ -25,6 +25,7 @@ export class CreateCategoryData {
     required: false,
   })
   @IsString()
+  @IsOptional()
   image: string;
 }
 

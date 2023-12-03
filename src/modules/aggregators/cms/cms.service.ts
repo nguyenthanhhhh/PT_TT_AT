@@ -12,6 +12,7 @@ import {
 import { ShoesService } from '../../resource/shoes/shoes.service';
 import {
   CreateShoesRefSizeData,
+  GetRefSizeData,
   UpdateShoesRefSizeData,
 } from '../../resource/shoes-ref-size/dto/request.dto';
 import { ShoesRefSizeService } from '../../resource/shoes-ref-size/shoesRefSize.service';
@@ -124,5 +125,9 @@ export class CmsService {
 
   async getOrder() {
     return this.orderService.getOrderCms();
+  }
+
+  async getListRefSize(getRefSizeData: GetRefSizeData) {
+    return this.shoesRefSizeService.getListShoesRefSize(getRefSizeData);
   }
 }

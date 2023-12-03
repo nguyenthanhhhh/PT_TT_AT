@@ -1,5 +1,11 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { PaginationQueriesDto } from '../../../../common/dto/pagination.dto';
 
+export class GetRefSizeData extends PaginationQueriesDto {
+  @IsString()
+  @IsOptional()
+  search: string;
+}
 export class CreateShoesRefSizeData {
   @IsNumber()
   size: number;

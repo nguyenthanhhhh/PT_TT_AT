@@ -1,13 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateShoesRefSizeData,
+  GetRefSizeData,
   UpdateShoesRefSizeData,
 } from './dto/request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShoesRefSize } from './shoesRefSize.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { pick } from 'lodash';
 import { Shoes } from '../shoes/shoes.entity';
+import {
+  LIMIT_DEFAULT,
+  OFFSET_DEFAULT,
+} from '../../../common/const/general.const';
 
 @Injectable()
 export class ShoesRefSizeService {
@@ -17,6 +22,35 @@ export class ShoesRefSizeService {
     @InjectRepository(Shoes)
     private readonly shoesRepository: Repository<Shoes>,
   ) {}
+
+  async getListShoesRefSize(getRefSizeData: GetRefSizeData) {
+    const filterQuery = { isDeleted: false };
+
+    const take = Number(getRefSizeData?.limit || LIMIT_DEFAULT);
+    const skip = Number(getRefSizeData?.offset || OFFSET_DEFAULT);
+
+    const { search } = getRefSizeData;
+
+    if (search) {
+      filterQuery['$shoes.name$'] = {
+        name: ILike(`%${search}%`),
+      };
+    }
+
+    const [refSize, total] = await this.shoesRefSizeRepository.findAndCount({
+      where: filterQuery,
+      relations: {
+        shoes: true,
+      },
+      take,
+      skip,
+      order: {
+        id: 'ASC',
+      },
+    });
+
+    return { total, limit: take, offset: skip, data: refSize };
+  }
 
   async getShoesRefSizeDetail(shoesRefSizeId: number) {
     const shoesRefSize = await this.shoesRefSizeRepository.findOne({

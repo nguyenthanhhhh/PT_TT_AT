@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -40,6 +41,7 @@ import {
 } from '../../resource/category/dto/request.dto';
 import {
   CreateShoesRefSizeData,
+  GetRefSizeData,
   UpdateShoesRefSizeData,
 } from '../../resource/shoes-ref-size/dto/request.dto';
 
@@ -123,7 +125,7 @@ export class CmsController {
   @ApiQuery({
     type: PaginationQueriesDto,
   })
-  async getListShoesForCms(getCmsShoesData: GetCmsShoesData) {
+  async getListShoesForCms(@Query() getCmsShoesData: GetCmsShoesData) {
     return this.cmsService.getListShoes(getCmsShoesData);
   }
 
@@ -168,6 +170,12 @@ export class CmsController {
   }
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('shoesRefSize')
+  async getListRefSize(@Query() getRefSizeData: GetRefSizeData) {
+    return this.cmsService.getListRefSize(getRefSizeData);
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Post('shoesRefSize')
   @ApiBearerAuth()
   async createShoesRefSizeCms(@Body() body: CreateShoesRefSizeData) {
@@ -201,7 +209,7 @@ export class CmsController {
   @ApiQuery({
     type: PaginationQueriesDto,
   })
-  async getListCategoryForCms(getCmsCategoryData: GetCmsCategoryData) {
+  async getListCategoryForCms(@Query() getCmsCategoryData: GetCmsCategoryData) {
     return this.cmsService.getListCategory(getCmsCategoryData);
   }
 
