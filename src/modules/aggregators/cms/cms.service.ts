@@ -130,4 +130,8 @@ export class CmsService {
   async getListRefSize(getRefSizeData: GetRefSizeData) {
     return this.shoesRefSizeService.getListShoesRefSize(getRefSizeData);
   }
+
+  async getRefSizeDetail(id: number) {
+    return this.shoesRefSizeService.getShoesRefSizeDetail(id);
+  }
 }

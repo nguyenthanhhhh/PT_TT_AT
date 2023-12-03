@@ -176,6 +176,13 @@ export class CmsController {
   }
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('shoesRefSize/:id')
+  @ApiBearerAuth()
+  async getShoesRefSizeDetailCms(@Param() param) {
+    return this.cmsService.getRefSizeDetail(Number(param.id));
+  }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Post('shoesRefSize')
   @ApiBearerAuth()
   async createShoesRefSizeCms(@Body() body: CreateShoesRefSizeData) {

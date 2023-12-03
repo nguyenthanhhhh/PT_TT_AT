@@ -6,7 +6,7 @@ import {
 } from './dto/request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShoesRefSize } from './shoesRefSize.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { pick } from 'lodash';
 import { Shoes } from '../shoes/shoes.entity';
 import {
@@ -24,32 +24,26 @@ export class ShoesRefSizeService {
   ) {}
 
   async getListShoesRefSize(getRefSizeData: GetRefSizeData) {
-    const filterQuery = { isDeleted: false };
-
     const take = Number(getRefSizeData?.limit || LIMIT_DEFAULT);
     const skip = Number(getRefSizeData?.offset || OFFSET_DEFAULT);
 
     const { search } = getRefSizeData;
 
+    const query = this.shoesRefSizeRepository
+      .createQueryBuilder('rs')
+      .innerJoinAndSelect('rs.shoes', 'shoes')
+      .where('rs.isDeleted = :isDeleted', { isDeleted: false });
+
     if (search) {
-      filterQuery['$shoes.name$'] = {
-        name: ILike(`%${search}%`),
-      };
+      query.andWhere('shoes.name ILIKE :search', { search: `%${search}%` });
     }
 
-    const [refSize, total] = await this.shoesRefSizeRepository.findAndCount({
-      where: filterQuery,
-      relations: {
-        shoes: true,
-      },
-      take,
-      skip,
-      order: {
-        id: 'ASC',
-      },
-    });
+    query.orderBy('rs.id', 'ASC');
+    query.skip(skip).take(take);
 
-    return { total, limit: take, offset: skip, data: refSize };
+    const [data, total] = await query.getManyAndCount();
+
+    return { total, limit: take, offset: skip, data };
   }
 
   async getShoesRefSizeDetail(shoesRefSizeId: number) {
