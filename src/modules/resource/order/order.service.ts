@@ -44,6 +44,21 @@ export class OrderService {
     return { total, limit: take, offset: skip, data: orders };
   }
 
+  async getOrderDetail(id: number) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id,
+        isDeleted: false,
+      },
+    });
+
+    if (!order) {
+      throw new HttpException('order not found', HttpStatus.NOT_FOUND);
+    }
+
+    return order;
+  }
+
   async addOrder(user: any, addOrderData: AddOrderData) {
     const shoes = await this.shoesRepository.findOne({
       where: {

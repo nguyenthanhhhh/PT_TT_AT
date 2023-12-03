@@ -267,4 +267,10 @@ export class CmsController {
   async getOrder() {
     return this.cmsService.getOrder();
   }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Get('orders/:id')
+  async getOrderDetail(@Param() param) {
+    return this.cmsService.getOrderDetail(param.id);
+  }
 }

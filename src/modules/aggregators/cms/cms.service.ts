@@ -134,4 +134,8 @@ export class CmsService {
   async getRefSizeDetail(id: number) {
     return this.shoesRefSizeService.getShoesRefSizeDetail(id);
   }
+
+  async getOrderDetail(id: number) {
+    return this.orderService.getOrderDetail(id);
+  }
 }
