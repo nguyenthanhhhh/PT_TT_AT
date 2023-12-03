@@ -50,6 +50,10 @@ export class OrderService {
         id,
         isDeleted: false,
       },
+      relations: {
+        user: true,
+        shoes: true,
+      },
     });
 
     if (!order) {
