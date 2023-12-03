@@ -52,6 +52,9 @@ export class ShoesRefSizeService {
         id: shoesRefSizeId,
         isDeleted: false,
       },
+      relations: {
+        shoes: true,
+      },
     });
 
     if (!shoesRefSize)
