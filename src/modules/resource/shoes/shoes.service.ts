@@ -100,8 +100,35 @@ export class ShoesService {
 
   async updateShoesCms(shoesId: number, updateShoesData: UpdateCmsShoesData) {
     const shoes = await this.getShoesDetail(shoesId);
+    let category: Category;
 
-    await this.shoesRepository.update(shoes.id, updateShoesData);
+    if (updateShoesData.categoryId) {
+      category = await this.categoryRepository.findOne({
+        where: {
+          id: updateShoesData.categoryId,
+          isDeleted: false,
+        },
+      });
+
+      if (!category) {
+        throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+      }
+    }
+
+    await this.shoesRepository.update(shoes.id, {
+      ...pick(
+        updateShoesData,
+        'company',
+        'image',
+        'isBetterSell',
+        'isNewArrival',
+        'material',
+        'name',
+        'price',
+        'vendor',
+      ),
+      category: category || shoes.category,
+    });
     return this.getShoesDetail(shoes.id);
   }
 

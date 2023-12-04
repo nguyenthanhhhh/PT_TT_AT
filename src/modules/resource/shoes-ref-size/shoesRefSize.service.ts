@@ -99,11 +99,24 @@ export class ShoesRefSizeService {
     updateShoesRefSizeData: UpdateShoesRefSizeData,
   ) {
     const shoesRefSize = await this.getShoesRefSizeDetail(shoesRefSizeId);
+    let shoes: Shoes;
 
-    await this.shoesRefSizeRepository.update(
-      shoesRefSize.id,
-      updateShoesRefSizeData,
-    );
+    if (updateShoesRefSizeData?.shoesId) {
+      shoes = await this.shoesRepository.findOne({
+        where: {
+          id: updateShoesRefSizeData.shoesId,
+          isDeleted: false,
+        },
+      });
+
+      if (!shoes)
+        throw new HttpException('Shoes not found', HttpStatus.NOT_FOUND);
+    }
+
+    await this.shoesRefSizeRepository.update(shoesRefSize.id, {
+      ...pick(updateShoesRefSizeData, 'quantity', 'size'),
+      shoes: shoes || shoesRefSize.shoes,
+    });
 
     return this.getShoesRefSizeDetail(shoesRefSize.id);
   }
