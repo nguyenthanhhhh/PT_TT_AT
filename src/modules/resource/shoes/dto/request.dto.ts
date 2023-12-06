@@ -80,7 +80,7 @@ export class UpdateCmsShoesData {
     type: String,
   })
   @IsOptional()
-  @IsNumber()
+  @IsString()
   name: string;
 
   @ApiProperty({
@@ -114,14 +114,14 @@ export class UpdateCmsShoesData {
   @ApiProperty({
     type: Boolean,
   })
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   isBetterSell: boolean;
 
   @ApiProperty({
     type: Boolean,
   })
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   isNewArrival: boolean;
 
