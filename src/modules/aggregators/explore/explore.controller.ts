@@ -27,7 +27,6 @@ export class ExploreController {
     return this.exploreService.registerUser(body);
   }
 
-  @UseGuards(AuthGuard, AuthorGuard)
   @Get('shoes')
   @ApiBearerAuth()
   @ApiOkResponse({
@@ -37,7 +36,6 @@ export class ExploreController {
     return this.exploreService.getListShoes();
   }
 
-  @UseGuards(AuthGuard, AuthorGuard)
   @Get('shoes/:id')
   @ApiBearerAuth()
   @ApiOkResponse({
@@ -47,7 +45,6 @@ export class ExploreController {
     return this.exploreService.getShoesDetail(Number(param.id));
   }
 
-  @UseGuards(AuthGuard, AuthorGuard)
   @Get('categories')
   @ApiBearerAuth()
   @ApiOkResponse({
@@ -57,7 +54,6 @@ export class ExploreController {
     return this.exploreService.getListCategory();
   }
 
-  @UseGuards(AuthGuard, AuthorGuard)
   @Get('categories/:id')
   @ApiBearerAuth()
   @ApiOkResponse({
