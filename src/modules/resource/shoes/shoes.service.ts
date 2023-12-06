@@ -86,6 +86,7 @@ export class ShoesService {
           'name',
           'price',
           'vendor',
+          'image',
         ),
         category,
       });
