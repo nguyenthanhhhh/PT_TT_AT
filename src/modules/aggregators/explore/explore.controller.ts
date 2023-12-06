@@ -88,8 +88,8 @@ export class ExploreController {
   }
 
   @UseGuards(AuthGuard, AuthorGuard)
-  @Get('users/:id')
-  async getUserDetail(@Param() param) {
-    return this.exploreService.getUserDetail(Number(param?.id));
+  @Get('profile')
+  async getUserDetail(@Request() req) {
+    return req.user;
   }
 }

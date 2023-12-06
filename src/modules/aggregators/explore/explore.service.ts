@@ -53,8 +53,4 @@ export class ExploreService {
   async addOrder(user: any, addOrderData: AddOrderData) {
     return this.orderService.addOrder(user, addOrderData);
   }
-
-  async getUserDetail(userId: number) {
-    return this.userService.getUserDetailCms(userId);
-  }
 }
