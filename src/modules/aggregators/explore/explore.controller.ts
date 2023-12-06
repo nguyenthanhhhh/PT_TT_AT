@@ -86,4 +86,10 @@ export class ExploreController {
   async addOrder(@Request() req, @Body() body: AddOrderData) {
     return this.exploreService.addOrder(req.user, body);
   }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Get('users/:id')
+  async getUserDetail(@Param() param) {
+    return this.exploreService.getUserDetail(Number(param?.id));
+  }
 }
