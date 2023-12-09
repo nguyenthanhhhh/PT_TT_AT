@@ -39,6 +39,9 @@ export class Order {
   @Column({ nullable: true, default: false })
   public inCart: boolean;
 
+  @Column({ nullable: true, type: 'jsonb' })
+  description: any;
+
   @Column({ nullable: false, type: 'boolean', default: false })
   public isDeleted: boolean;
 

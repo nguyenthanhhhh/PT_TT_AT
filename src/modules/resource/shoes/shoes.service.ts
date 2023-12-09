@@ -30,8 +30,9 @@ export class ShoesService {
       const take = Number(getCmsShoesData?.limit || LIMIT_DEFAULT);
       const skip = Number(getCmsShoesData?.offset || OFFSET_DEFAULT);
 
-      if (getCmsShoesData?.categoryId)
-        filterQuery['categoryId'] = getCmsShoesData?.categoryId;
+      if (getCmsShoesData?.categoryId) {
+        filterQuery['category.id'] = getCmsShoesData?.categoryId;
+      }
 
       const [shoes, total] = await this.shoesRepository.findAndCount({
         where: filterQuery,
@@ -140,19 +141,30 @@ export class ShoesService {
     return true;
   }
 
-  async getListShoes() {
+  async getListShoes(getShoesData: GetCmsShoesData) {
     try {
+      const filterQuery = { isDeleted: false };
+
+      const take = Number(getShoesData?.limit || LIMIT_DEFAULT);
+      const skip = Number(getShoesData?.offset || OFFSET_DEFAULT);
+
+      if (getShoesData?.categoryId)
+        filterQuery['category.id'] = getShoesData?.categoryId;
+
       const shoes = await this.shoesRepository.find({
-        where: {
-          isDeleted: false,
-        },
+        where: filterQuery,
         relations: {
           refSizes: true,
           category: true,
         },
+        take,
+        skip,
+        order: {
+          id: 'ASC',
+        },
       });
 
-      return shoes;
+      return { limit: take, offset: skip, data: shoes };
     } catch (error) {
       console.log('[getListShoes] error: ', error);
       throw new HttpException(

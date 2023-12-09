@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -12,8 +15,12 @@ import { ExploreService } from './explore.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthorGuard } from '../auth/author.guard';
 import { RegisterAdminData } from '../../resource/user/dto/request.dto';
-import { AddProductData } from '../../resource/cart/dto/request.dto';
+import {
+  AddProductData,
+  PaidCartData,
+} from '../../resource/cart/dto/request.dto';
 import { AddOrderData } from '../../resource/order/dto/request.dto';
+import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
 
 @Controller('explore')
 export class ExploreController {
@@ -32,8 +39,8 @@ export class ExploreController {
   @ApiOkResponse({
     description: 'Get list Shoes',
   })
-  async getListShoes() {
-    return this.exploreService.getListShoes();
+  async getListShoes(@Query() getShoesData: GetCmsShoesData) {
+    return this.exploreService.getListShoes(getShoesData);
   }
 
   @Get('shoes/:id')
@@ -76,9 +83,9 @@ export class ExploreController {
   }
 
   @UseGuards(AuthGuard, AuthorGuard)
-  @Get('orders')
-  async getOrder() {
-    return this.exploreService.getOrder();
+  @Get('orders/:id')
+  async getOrderDetail(@Param() param) {
+    return this.exploreService.getOrderDetail(param.id);
   }
 
   @UseGuards(AuthGuard, AuthorGuard)
@@ -91,5 +98,37 @@ export class ExploreController {
   @Get('profile')
   async getUserDetail(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Delete('carts/delete-product/:id')
+  async deleteProductInCart(@Request() req, @Param() param) {
+    return this.exploreService.deleteProductInCart(req?.user, param?.id);
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Patch('carts/update-product/:id')
+  async updateProductQuantityInCart(
+    @Request() req,
+    @Param() param,
+    @Body() body,
+  ) {
+    return this.exploreService.updateProductQuantityInCart(
+      req?.user,
+      param?.id,
+      body?.quantity,
+    );
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Patch('carts/paid')
+  async paidCart(@Request() req, @Body() body: PaidCartData) {
+    return this.exploreService.paidCart(req?.user, body);
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Get('orders')
+  async getOrders(@Request() req) {
+    return this.exploreService.getListOrderByUser(req?.user);
   }
 }

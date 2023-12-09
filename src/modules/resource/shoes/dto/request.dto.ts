@@ -8,7 +8,6 @@ export class GetCmsShoesData extends PaginationQueriesDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber()
   categoryId: number;
 }
 

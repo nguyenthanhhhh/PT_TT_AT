@@ -273,4 +273,10 @@ export class CmsController {
   async getOrderDetail(@Param() param) {
     return this.cmsService.getOrderDetail(param.id);
   }
+
+  @UseGuards(AuthGuard, AuthorAdminGuard)
+  @Patch('orders/verify/:id')
+  async verifyOrder(@Param() param) {
+    return this.cmsService.verifyOrder(param.id);
+  }
 }

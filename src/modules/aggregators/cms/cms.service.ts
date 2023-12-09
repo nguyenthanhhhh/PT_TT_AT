@@ -138,4 +138,8 @@ export class CmsService {
   async getOrderDetail(id: number) {
     return this.orderService.getOrderDetail(id);
   }
+
+  async verifyOrder(orderId: number) {
+    return this.orderService.verifyOrderCms(orderId);
+  }
 }

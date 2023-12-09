@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class AddOrderData {
   @IsNumber()
@@ -9,4 +9,7 @@ export class AddOrderData {
 
   @IsNumber()
   shoesId: number;
+
+  @IsOptional()
+  description: any;
 }

@@ -3,10 +3,14 @@ import { UserService } from '../../resource/user/user.service';
 import { RegisterAdminData } from '../../resource/user/dto/request.dto';
 import { ShoesService } from '../../resource/shoes/shoes.service';
 import { CategoryService } from '../../resource/category/category.service';
-import { AddProductData } from '../../resource/cart/dto/request.dto';
+import {
+  AddProductData,
+  PaidCartData,
+} from '../../resource/cart/dto/request.dto';
 import { CartService } from '../../resource/cart/cart.service';
 import { OrderService } from '../../resource/order/order.service';
 import { AddOrderData } from '../../resource/order/dto/request.dto';
+import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
 
 @Injectable()
 export class ExploreService {
@@ -22,8 +26,8 @@ export class ExploreService {
     return this.userService.registerUser(registerUserData);
   }
 
-  async getListShoes() {
-    return this.shoesService.getListShoes();
+  async getListShoes(getShoesData: GetCmsShoesData) {
+    return this.shoesService.getListShoes(getShoesData);
   }
 
   async getShoesDetail(shoesId: number) {
@@ -46,11 +50,35 @@ export class ExploreService {
     return this.cartService.getOrderInCart(userId);
   }
 
-  async getOrder() {
-    return this.orderService.getOrderCms();
+  async getOrderDetail(id: number) {
+    return this.orderService.getOrderDetail(id);
   }
 
   async addOrder(user: any, addOrderData: AddOrderData) {
     return this.orderService.addOrder(user, addOrderData);
+  }
+
+  async deleteProductInCart(user: any, orderId: number) {
+    return this.cartService.deleteProductInCart(user, orderId);
+  }
+
+  async updateProductQuantityInCart(
+    user: any,
+    orderId: number,
+    quantity: number,
+  ) {
+    return this.cartService.updateProductQuantityInCart(
+      user,
+      orderId,
+      quantity,
+    );
+  }
+
+  async paidCart(user: any, paidCartData: PaidCartData) {
+    return this.cartService.paidCart(user, paidCartData);
+  }
+
+  async getListOrderByUser(user: any) {
+    return this.orderService.getOrderByUser(user);
   }
 }

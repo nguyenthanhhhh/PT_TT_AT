@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
 export class AddProductData {
   @IsNumber()
@@ -9,4 +9,12 @@ export class AddProductData {
 
   @IsNumber()
   quantity: number;
+}
+
+export class PaidCartData {
+  @IsArray()
+  orderIds: any[];
+
+  @IsOptional()
+  description: any;
 }

@@ -63,6 +63,32 @@ export class OrderService {
     return order;
   }
 
+  async getOrderByUser(user: any) {
+    const take = Number(LIMIT_DEFAULT);
+    const skip = Number(OFFSET_DEFAULT);
+
+    const [orders, total] = await this.orderRepository.findAndCount({
+      where: {
+        isDeleted: false,
+        inCart: false,
+        isPaid: true,
+        user: {
+          id: user.id,
+        },
+      },
+      relations: {
+        user: true,
+        shoes: true,
+      },
+      take,
+      skip,
+      order: {
+        id: 'ASC',
+      },
+    });
+    return { total, limit: take, offset: skip, data: orders };
+  }
+
   async addOrder(user: any, addOrderData: AddOrderData) {
     const shoes = await this.shoesRepository.findOne({
       where: {
@@ -99,7 +125,7 @@ export class OrderService {
 
     const amount = Number(shoes.price * addOrderData.quantity);
     const order = this.orderRepository.create({
-      ...pick(addOrderData, 'quantity', 'size'),
+      ...pick(addOrderData, 'quantity', 'size', 'description'),
       amount,
       isPaid: true,
       isVerify: false,
@@ -112,6 +138,27 @@ export class OrderService {
     await this.shoesRefSizeRepository.update(refSize.id, {
       quantity: refSize.quantity - addOrderData.quantity,
     });
+    return order;
+  }
+
+  async verifyOrderCms(orderId: number) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        isDeleted: false,
+        id: orderId,
+        isPaid: true,
+        isVerify: false,
+      },
+    });
+
+    if (!order) {
+      throw new HttpException('order not found', HttpStatus.NOT_FOUND);
+    }
+
+    await this.orderRepository.update(order.id, {
+      isVerify: true,
+    });
+
     return true;
   }
 }
