@@ -1,15 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "./main.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "router": [
-    {
-      "src": "./(.*)",
-      "dest": "./"
-    }
-  ]
+  "buildCommand": "yarn install",
+  "cleanUrls": true
 }
