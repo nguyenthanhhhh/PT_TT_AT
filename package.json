@@ -6,7 +6,7 @@
    "private": true,
    "license": "UNLICENSED",
    "scripts": {
-      "build": "babel src -d lib",
+      "build": "yarn install",
       "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
       "start": "TZ=UTC nest start",
       "start:dev": "TZ=UTC nest start --watch",
