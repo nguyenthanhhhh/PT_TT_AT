@@ -151,6 +151,7 @@ export class CartService {
     const shoes = await this.shoesRepository.findOne({
       where: {
         id: order.shoes.id,
+        isDeleted: false,
       },
     });
 
