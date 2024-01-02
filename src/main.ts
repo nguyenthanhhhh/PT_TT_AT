@@ -7,15 +7,15 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // app.enableCors({
-  //   origin: (origin, callback) => {
-  //     const allowedOrigins = ['https://shoe-zone.vercel.app/'];
-  //     const isAllowed = allowedOrigins.includes(origin);
-  //     callback(null, isAllowed);
-  //   },
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   credentials: true,
-  // });
+  app.enableCors({
+    origin: (origin, callback) => {
+      const allowedOrigins = ['https://shoe-zone.vercel.app/'];
+      const isAllowed = allowedOrigins.includes(origin);
+      callback(null, isAllowed);
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   app.useGlobalPipes(new ValidationPipe());
   const configSvc = app.get(ConfigService);
