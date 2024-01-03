@@ -8,11 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: (origin, callback) => {
-      const allowedOrigins = ['https://shoe-zone.vercel.app/'];
-      const isAllowed = allowedOrigins.includes(origin);
-      callback(null, isAllowed);
-    },
+    origin: 'http://allowed-domain.com',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
