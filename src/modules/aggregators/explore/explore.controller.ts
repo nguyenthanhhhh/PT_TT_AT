@@ -10,7 +10,6 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { ExploreService } from './explore.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthorGuard } from '../auth/author.guard';
@@ -27,45 +26,26 @@ export class ExploreController {
   constructor(private readonly exploreService: ExploreService) {}
 
   @Post('registers')
-  @ApiOkResponse({
-    description: 'Register User',
-  })
   async registerUser(@Body() body: RegisterAdminData) {
     return this.exploreService.registerUser(body);
   }
 
   @Get('shoes')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Get list Shoes',
-  })
   async getListShoes(@Query() getShoesData: GetCmsShoesData) {
     return this.exploreService.getListShoes(getShoesData);
   }
 
   @Get('shoes/:id')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Get Shoes detail',
-  })
   async getShoesDetail(@Param() param) {
     return this.exploreService.getShoesDetail(Number(param.id));
   }
 
   @Get('categories')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Get list Category',
-  })
   async getListCategory() {
     return this.exploreService.getListCategory();
   }
 
   @Get('categories/:id')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Get Category detail',
-  })
   async getCategoryDetail(@Param() param) {
     return this.exploreService.getCategoryDetail(Number(param.id));
   }
