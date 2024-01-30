@@ -126,7 +126,7 @@ export class CmsController {
     return this.cmsService.updateShoesRefSize(param.id, body);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Delete('shoesRefSize/:id')
   async deleteShoesRefSizeCms(@Param() param) {
     return this.cmsService.deleteShoesRefSize(param.id);
@@ -138,25 +138,25 @@ export class CmsController {
     return this.cmsService.getListCategory(getCmsCategoryData);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('categories/:id')
   async getCategoryDetailForCms(@Param() params) {
     return this.cmsService.getCategoryDetail(params.id);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Post('categories')
   async createCategoryForCms(@Body() body: CreateCategoryData) {
     return this.cmsService.createCategory(body);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Patch('categories/:id')
   async updateCategoryForCms(@Param() param, @Body() body: UpdateCategoryData) {
     return this.cmsService.updateCategory(Number(param.id), body);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Delete('categories/:id')
   async deleteCategoryForCms(@Param() param) {
     return this.cmsService.deleteCategory(Number(param.id));
