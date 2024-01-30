@@ -126,13 +126,13 @@ export class CmsController {
     return this.cmsService.updateShoesRefSize(param.id, body);
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Delete('shoesRefSize/:id')
   async deleteShoesRefSizeCms(@Param() param) {
     return this.cmsService.deleteShoesRefSize(param.id);
   }
 
-  @UseGuards(AuthGuard, AuthorAdminGuard)
+  // @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('categories')
   async getListCategoryForCms(@Query() getCmsCategoryData: GetCmsCategoryData) {
     return this.cmsService.getListCategory(getCmsCategoryData);
