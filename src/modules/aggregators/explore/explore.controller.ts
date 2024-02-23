@@ -111,4 +111,29 @@ export class ExploreController {
   async getOrders(@Request() req) {
     return this.exploreService.getListOrderByUser(req?.user);
   }
+
+  @Get('todos')
+  async getListTodos() {
+    return this.exploreService.getListTodos();
+  }
+
+  @Get('todos/:id')
+  async getTodosDetail(@Param() param) {
+    return this.exploreService.getDetailTodos(Number(param.id));
+  }
+
+  @Post('todos')
+  async createTodos(@Body() body) {
+    return this.exploreService.createTodos(body);
+  }
+
+  @Patch('todos/:id')
+  async updateTodos(@Param() params, @Body() body) {
+    return this.exploreService.updateTodos(params.id, body);
+  }
+
+  @Delete('todos/:id')
+  async deleteTodos(@Param() params) {
+    return this.exploreService.deleteTodos(params.id);
+  }
 }

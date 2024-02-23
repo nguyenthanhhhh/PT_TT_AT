@@ -32,10 +32,14 @@ import {
   GetRefSizeData,
   UpdateShoesRefSizeData,
 } from '../../resource/shoes-ref-size/dto/request.dto';
+import { RedisCacheService } from '../../resource/redis-cache/redis-cache.service';
 
 @Controller('cms')
 export class CmsController {
-  constructor(private readonly cmsService: CmsService) {}
+  constructor(
+    private readonly cmsService: CmsService,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('users')
@@ -132,31 +136,43 @@ export class CmsController {
     return this.cmsService.deleteShoesRefSize(param.id);
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('categories')
-  async getListCategoryForCms(@Query() getCmsCategoryData: GetCmsCategoryData) {
-    return this.cmsService.getListCategory(getCmsCategoryData);
+  async getListCategoryForCms(
+    @Query() getCmsCategoryData: GetCmsCategoryData,
+    @Request() request,
+  ) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
+    const result = await this.cmsService.getListCategory(getCmsCategoryData);
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getCategory] Set cache error: ', error);
+    });
+
+    return result;
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('categories/:id')
   async getCategoryDetailForCms(@Param() params) {
     return this.cmsService.getCategoryDetail(params.id);
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Post('categories')
   async createCategoryForCms(@Body() body: CreateCategoryData) {
     return this.cmsService.createCategory(body);
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Patch('categories/:id')
   async updateCategoryForCms(@Param() param, @Body() body: UpdateCategoryData) {
     return this.cmsService.updateCategory(Number(param.id), body);
   }
 
-  // @UseGuards(AuthGuard, AuthorAdminGuard)
+  @UseGuards(AuthGuard, AuthorAdminGuard)
   @Delete('categories/:id')
   async deleteCategoryForCms(@Param() param) {
     return this.cmsService.deleteCategory(Number(param.id));

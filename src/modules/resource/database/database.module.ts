@@ -16,7 +16,7 @@ import { join } from 'path';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DATABASE'),
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         migrationsTableName: 'migration',
         entities: [join(__dirname, '../modules/**/*.entity{.js,.ts}')],
         migrations: [join(__dirname, '../migrations/**/*{.js,.ts}')],

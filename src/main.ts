@@ -12,6 +12,8 @@ async function bootstrap() {
   const configSvc = app.get(ConfigService);
   const httpPort = configSvc.get('REST_PORT');
 
-  await app.listen(httpPort);
+  await app.listen(httpPort, () => {
+    console.log(`App run on port ${httpPort}`);
+  });
 }
 bootstrap();

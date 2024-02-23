@@ -8,6 +8,7 @@ import { ShoesModule } from '../../resource/shoes/shoes.module';
 import { ShoesRefSizeModule } from '../../resource/shoes-ref-size/shoesRefSize.module';
 import { CategoryModule } from '../../resource/category/category.module';
 import { OrderModule } from '../../resource/order/order.module';
+import { RedisCacheModule } from '../../resource/redis-cache/redis-cache.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OrderModule } from '../../resource/order/order.module';
     ShoesRefSizeModule,
     CategoryModule,
     OrderModule,
+    RedisCacheModule,
   ],
   controllers: [CmsController],
   providers: [CmsService],

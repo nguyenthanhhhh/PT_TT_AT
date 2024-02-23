@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { CategoryModule } from '../../resource/category/category.module';
 import { CartModule } from '../../resource/cart/cart.module';
 import { OrderModule } from '../../resource/order/order.module';
+import { TodosModule } from '../../resource/todos/todos.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OrderModule } from '../../resource/order/order.module';
     CategoryModule,
     CartModule,
     OrderModule,
+    TodosModule,
   ],
   controllers: [ExploreController],
   providers: [ExploreService],

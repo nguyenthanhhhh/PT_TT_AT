@@ -11,6 +11,7 @@ import { CartService } from '../../resource/cart/cart.service';
 import { OrderService } from '../../resource/order/order.service';
 import { AddOrderData } from '../../resource/order/dto/request.dto';
 import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
+import { TodosService } from '../../resource/todos/todos.service';
 
 @Injectable()
 export class ExploreService {
@@ -20,6 +21,7 @@ export class ExploreService {
     private readonly categoryService: CategoryService,
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
+    private readonly todosService: TodosService,
   ) {}
 
   async registerUser(registerUserData: RegisterAdminData) {
@@ -80,5 +82,25 @@ export class ExploreService {
 
   async getListOrderByUser(user: any) {
     return this.orderService.getOrderByUser(user);
+  }
+
+  async getListTodos() {
+    return this.todosService.getList();
+  }
+
+  async getDetailTodos(id) {
+    return this.todosService.getDetail(id);
+  }
+
+  async createTodos(createData) {
+    return this.todosService.create(createData);
+  }
+
+  async updateTodos(id, updateData) {
+    return this.todosService.update(id, updateData);
+  }
+
+  async deleteTodos(id) {
+    return this.todosService.delete(id);
   }
 }

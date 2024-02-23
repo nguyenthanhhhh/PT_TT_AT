@@ -11,12 +11,14 @@ import {
   LIMIT_DEFAULT,
   OFFSET_DEFAULT,
 } from '../../../common/const/general.const';
+import { RedisCacheService } from '../redis-cache/redis-cache.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   async getListCategoryCms(getCmsCategoryData: GetCmsCategoryData) {
@@ -58,6 +60,10 @@ export class CategoryService {
     const newCategory = this.categoryRepository.create(createCategoryData);
     await this.categoryRepository.save(newCategory);
 
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCategory] error: ', error);
+    });
+
     return this.getCategoryDetail(newCategory.id);
   }
 
@@ -69,6 +75,10 @@ export class CategoryService {
 
     await this.categoryRepository.update(category.id, updateCategoryData);
 
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCategory] error: ', error);
+    });
+
     return this.getCategoryDetail(category.id);
   }
 
@@ -76,6 +86,11 @@ export class CategoryService {
     const category = await this.getCategoryDetail(categoryId);
 
     await this.categoryRepository.update(category.id, { isDeleted: true });
+
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCategory] error: ', error);
+    });
+
     return true;
   }
 
@@ -96,5 +111,9 @@ export class CategoryService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async clearCache() {
+    return this.redisCacheService.scanAndDelete(`*/categories*`);
   }
 }
