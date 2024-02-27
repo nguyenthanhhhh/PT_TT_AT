@@ -20,10 +20,14 @@ import {
 } from '../../resource/cart/dto/request.dto';
 import { AddOrderData } from '../../resource/order/dto/request.dto';
 import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
+import { RedisCacheService } from '../../resource/redis-cache/redis-cache.service';
 
 @Controller('explore')
 export class ExploreController {
-  constructor(private readonly exploreService: ExploreService) {}
+  constructor(
+    private readonly exploreService: ExploreService,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
 
   @Post('registers')
   async registerUser(@Body() body: RegisterAdminData) {
@@ -31,8 +35,20 @@ export class ExploreController {
   }
 
   @Get('shoes')
-  async getListShoes(@Query() getShoesData: GetCmsShoesData) {
-    return this.exploreService.getListShoes(getShoesData);
+  async getListShoes(
+    @Query() getShoesData: GetCmsShoesData,
+    @Request() request,
+  ) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
+    const result = await this.exploreService.getListShoes(getShoesData);
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getShoes] Set cache error: ', error);
+    });
+
+    return result;
   }
 
   @Get('shoes/:id')
@@ -41,8 +57,17 @@ export class ExploreController {
   }
 
   @Get('categories')
-  async getListCategory() {
-    return this.exploreService.getListCategory();
+  async getListCategory(@Request() request) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
+    const result = await this.exploreService.getListCategory();
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getCategory] Set cache error: ', error);
+    });
+
+    return result;
   }
 
   @Get('categories/:id')
@@ -58,8 +83,19 @@ export class ExploreController {
 
   @UseGuards(AuthGuard, AuthorGuard)
   @Get('carts/orders')
-  async getOrderInCart(@Request() req) {
-    return this.exploreService.getOrderInCart(Number(req.user.id));
+  async getOrderInCart(@Request() request) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
+    const result = await this.exploreService.getOrderInCart(
+      Number(request.user.id),
+    );
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getOrderInCart] Set cache error: ', error);
+    });
+
+    return result;
   }
 
   @UseGuards(AuthGuard, AuthorGuard)
@@ -108,8 +144,17 @@ export class ExploreController {
 
   @UseGuards(AuthGuard, AuthorGuard)
   @Get('orders')
-  async getOrders(@Request() req) {
-    return this.exploreService.getListOrderByUser(req?.user);
+  async getOrders(@Request() request) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
+    const result = await this.exploreService.getListOrderByUser(request?.user);
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getOrders] Set cache error: ', error);
+    });
+
+    return result;
   }
 
   @Get('todos')

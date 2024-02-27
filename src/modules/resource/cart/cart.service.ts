@@ -11,6 +11,7 @@ import {
   LIMIT_DEFAULT,
   OFFSET_DEFAULT,
 } from '../../../common/const/general.const';
+import { RedisCacheService } from '../redis-cache/redis-cache.service';
 
 @Injectable()
 export class CartService {
@@ -23,6 +24,7 @@ export class CartService {
     private readonly shoesRepository: Repository<Shoes>,
     @InjectRepository(ShoesRefSize)
     private readonly shoesRefSizeRepository: Repository<ShoesRefSize>,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   async getOrderInCart(userId: number) {
@@ -99,6 +101,11 @@ export class CartService {
     await this.shoesRefSizeRepository.update(refSize.id, {
       quantity: refSize.quantity - addProductData.quantity,
     });
+
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCart] error: ', error);
+    });
+
     return order;
   }
 
@@ -125,6 +132,10 @@ export class CartService {
     await this.orderRepository.update(order.id, {
       isDeleted: true,
       inCart: false,
+    });
+
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCart] error: ', error);
     });
 
     return true;
@@ -195,6 +206,11 @@ export class CartService {
     await this.shoesRefSizeRepository.update(refSize.id, {
       quantity: refSize.quantity + -quantity,
     });
+
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCart] error: ', error);
+    });
+
     return true;
   }
 
@@ -237,6 +253,14 @@ export class CartService {
       }),
     );
 
+    this.clearCache().catch((error) => {
+      console.log('[clearCacheCart] error: ', error);
+    });
+
     return true;
+  }
+
+  async clearCache() {
+    return this.redisCacheService.scanAndDelete(`*/carts/*`);
   }
 }

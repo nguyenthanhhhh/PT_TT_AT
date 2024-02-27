@@ -10,6 +10,7 @@ import {
 import { AddOrderData } from './dto/request.dto';
 import { Shoes } from '../shoes/shoes.entity';
 import { ShoesRefSize } from '../shoes-ref-size/shoesRefSize.entity';
+import { RedisCacheService } from '../redis-cache/redis-cache.service';
 
 @Injectable()
 export class OrderService {
@@ -20,6 +21,7 @@ export class OrderService {
     private readonly shoesRepository: Repository<Shoes>,
     @InjectRepository(ShoesRefSize)
     private readonly shoesRefSizeRepository: Repository<ShoesRefSize>,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   async getOrderCms() {
@@ -138,6 +140,11 @@ export class OrderService {
     await this.shoesRefSizeRepository.update(refSize.id, {
       quantity: refSize.quantity - addOrderData.quantity,
     });
+
+    this.clearCache().catch((error) => {
+      console.log('[clearCache][addOrder] error: ', error);
+    });
+
     return order;
   }
 
@@ -159,6 +166,14 @@ export class OrderService {
       isVerify: true,
     });
 
+    this.clearCache().catch((error) => {
+      console.log('[clearCache][VerifyOrder] error: ', error);
+    });
+
     return true;
+  }
+
+  async clearCache() {
+    return this.redisCacheService.scanAndDelete(`*/orders/*`);
   }
 }

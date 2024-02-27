@@ -148,7 +148,7 @@ export class CmsController {
     const result = await this.cmsService.getListCategory(getCmsCategoryData);
 
     await this.redisCacheService.set(request.url, result).catch((error) => {
-      console.log('[getCategory] Set cache error: ', error);
+      console.log('[getCategoryCms] Set cache error: ', error);
     });
 
     return result;
