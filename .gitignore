@@ -1,6 +1,4 @@
 # Environment
-.env
-.env.*
 !.env.development
 !.env.testing
 docker-compose.yml
@@ -41,5 +39,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 package-lock.json
+yarn.lock
 
 .scannerwork

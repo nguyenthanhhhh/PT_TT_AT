@@ -32,13 +32,11 @@ import {
   GetRefSizeData,
   UpdateShoesRefSizeData,
 } from '../../resource/shoes-ref-size/dto/request.dto';
-import { RedisCacheService } from '../../resource/redis-cache/redis-cache.service';
 
 @Controller('cms')
 export class CmsController {
   constructor(
     private readonly cmsService: CmsService,
-    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
@@ -140,16 +138,8 @@ export class CmsController {
   @Get('categories')
   async getListCategoryForCms(
     @Query() getCmsCategoryData: GetCmsCategoryData,
-    @Request() request,
   ) {
-    const cacheResult = await this.redisCacheService.get(request.url);
-    if (cacheResult) return cacheResult;
-
     const result = await this.cmsService.getListCategory(getCmsCategoryData);
-
-    await this.redisCacheService.set(request.url, result).catch((error) => {
-      console.log('[getCategoryCms] Set cache error: ', error);
-    });
 
     return result;
   }
