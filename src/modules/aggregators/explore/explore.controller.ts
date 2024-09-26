@@ -23,9 +23,7 @@ import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
 
 @Controller('explore')
 export class ExploreController {
-  constructor(
-    private readonly exploreService: ExploreService,
-  ) {}
+  constructor(private readonly exploreService: ExploreService) {}
 
   @Post('registers')
   async registerUser(@Body() body: RegisterAdminData) {
@@ -33,9 +31,7 @@ export class ExploreController {
   }
 
   @Get('shoes')
-  async getListShoes(
-    @Query() getShoesData: GetCmsShoesData,
-  ) {
+  async getListShoes(@Query() getShoesData: GetCmsShoesData) {
     const result = await this.exploreService.getListShoes(getShoesData);
 
     return result;
@@ -124,30 +120,5 @@ export class ExploreController {
     const result = await this.exploreService.getListOrderByUser(request?.user);
 
     return result;
-  }
-
-  @Get('todos')
-  async getListTodos() {
-    return this.exploreService.getListTodos();
-  }
-
-  @Get('todos/:id')
-  async getTodosDetail(@Param() param) {
-    return this.exploreService.getDetailTodos(Number(param.id));
-  }
-
-  @Post('todos')
-  async createTodos(@Body() body) {
-    return this.exploreService.createTodos(body);
-  }
-
-  @Patch('todos/:id')
-  async updateTodos(@Param() params, @Body() body) {
-    return this.exploreService.updateTodos(params.id, body);
-  }
-
-  @Delete('todos/:id')
-  async deleteTodos(@Param() params) {
-    return this.exploreService.deleteTodos(params.id);
   }
 }
