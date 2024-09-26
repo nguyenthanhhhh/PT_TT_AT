@@ -124,10 +124,14 @@ export class OrderService {
       );
 
     const amount = Number(shoes.price * addOrderData.quantity);
+
+    const timestamp = new Date();
+
     const order = this.orderRepository.create({
       ...pick(addOrderData, 'quantity', 'size', 'description'),
       amount,
       isPaid: true,
+      timestamp,
       isVerify: false,
       user,
       shoes,
@@ -138,6 +142,30 @@ export class OrderService {
     await this.shoesRefSizeRepository.update(refSize.id, {
       quantity: refSize.quantity - addOrderData.quantity,
     });
+
+    return order;
+  }
+
+  async updateTimestamp(user: any, orderId: string) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id: Number(orderId),
+        isDeleted: false,
+      },
+      relations: {
+        user: true,
+        shoes: true,
+      },
+    });
+
+    // Lấy thời gian hiện tại từ timestamp và cộng thêm 5 phút
+    const currentTimestamp = new Date();
+    const newTimestamp = new Date(currentTimestamp.getTime() + 5 * 60 * 1000);
+
+    order.timestamp = newTimestamp;
+
+    // Lưu lại thay đổi
+    await this.orderRepository.save(order);
 
     return order;
   }

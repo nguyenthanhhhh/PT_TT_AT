@@ -23,9 +23,7 @@ import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
 
 @Controller('explore')
 export class ExploreController {
-  constructor(
-    private readonly exploreService: ExploreService,
-  ) {}
+  constructor(private readonly exploreService: ExploreService) {}
 
   @Post('registers')
   async registerUser(@Body() body: RegisterAdminData) {
@@ -33,9 +31,7 @@ export class ExploreController {
   }
 
   @Get('shoes')
-  async getListShoes(
-    @Query() getShoesData: GetCmsShoesData,
-  ) {
+  async getListShoes(@Query() getShoesData: GetCmsShoesData) {
     const result = await this.exploreService.getListShoes(getShoesData);
 
     return result;

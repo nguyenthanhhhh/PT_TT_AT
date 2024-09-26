@@ -33,6 +33,9 @@ export class Order {
   @Column({ nullable: false })
   public isPaid: boolean;
 
+  @Column({ nullable: true })
+  public timestamp: Date;
+
   @Column({ nullable: false })
   public isVerify: boolean;
 
