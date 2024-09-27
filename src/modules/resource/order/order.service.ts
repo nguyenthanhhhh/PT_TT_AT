@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './order.entity';
@@ -10,6 +11,8 @@ import {
 import { AddOrderData } from './dto/request.dto';
 import { Shoes } from '../shoes/shoes.entity';
 import { ShoesRefSize } from '../shoes-ref-size/shoesRefSize.entity';
+import { differenceInMinutes } from 'date-fns';
+import { validateSQRC } from '../../../common/helper/sqrc';
 
 @Injectable()
 export class OrderService {
@@ -130,7 +133,7 @@ export class OrderService {
     const order = this.orderRepository.create({
       ...pick(addOrderData, 'quantity', 'size', 'description'),
       amount,
-      isPaid: true,
+      isPaid: false,
       timestamp,
       isVerify: false,
       user,
@@ -146,7 +149,75 @@ export class OrderService {
     return order;
   }
 
-  async updateTimestamp(user: any, orderId: string) {
+  async verifyQrCode(data: any) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id: Number(data.publicData.id),
+        isDeleted: false,
+      },
+      relations: {
+        user: true,
+        shoes: true,
+      },
+    });
+
+    const privateData = validateSQRC({
+      publicData: JSON.stringify(data.publicData),
+      encryptedPrivateData: data.encryptedPrivateData,
+      signature: data.signature,
+    });
+
+    if (!order) {
+      throw new HttpException('order not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (order.isPaid) {
+      throw new HttpException('Qr has been paid', HttpStatus.BAD_REQUEST);
+    }
+
+    const currentTime = new Date(); // Lấy thời gian hiện tại
+    const orderTimestamp = new Date(order.timestamp); // Lấy thời gian từ trường timestamp của order
+    const diffInMinutes = differenceInMinutes(currentTime, orderTimestamp); // Tính chênh lệch thời gian
+
+    if (diffInMinutes > 5) {
+      throw new HttpException('QR code has expired', HttpStatus.BAD_REQUEST);
+    }
+
+    const isOrderValid = this.checkOrderValidity(
+      data.publicData,
+      JSON.parse(privateData),
+      order,
+    );
+
+    if (!isOrderValid) {
+      throw new HttpException(
+        'Order information does not match',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return order;
+  }
+
+  private checkOrderValidity(
+    publicData: any,
+    privateData: any,
+    order: any,
+  ): boolean {
+    // Kiểm tra các trường cần thiết
+    const isPublicDataValid =
+      order.quantity === publicData.quantity &&
+      order.shoes.id === publicData.shoes.id;
+
+    const isPrivateDataValid =
+      order.user.id === privateData.user.id &&
+      order.user.username === privateData.user.username;
+
+    // Trả về true nếu tất cả thông tin đều hợp lệ
+    return isPublicDataValid && isPrivateDataValid;
+  }
+
+  async updateTimestamp(orderId: string) {
     const order = await this.orderRepository.findOne({
       where: {
         id: Number(orderId),

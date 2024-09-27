@@ -83,6 +83,18 @@ export class ExploreController {
   }
 
   @UseGuards(AuthGuard, AuthorGuard)
+  @Post('order-timestamp/:id')
+  async updateTimestamp(@Param() param) {
+    return this.exploreService.updateTimestamp(param.id);
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Post('verify-qr')
+  async verifyOrder(@Body() body: any) {
+    return this.exploreService.verifyQr(body);
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
   @Get('profile')
   async getUserDetail(@Request() req) {
     return req.user;

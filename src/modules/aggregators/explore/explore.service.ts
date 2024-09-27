@@ -60,6 +60,14 @@ export class ExploreService {
     return this.orderService.addOrder(user, addOrderData);
   }
 
+  async verifyQr(data: any) {
+    return this.orderService.verifyQrCode(data);
+  }
+
+  async updateTimestamp(orderId: string) {
+    return this.orderService.updateTimestamp(orderId);
+  }
+
   async deleteProductInCart(user: any, orderId: number) {
     return this.cartService.deleteProductInCart(user, orderId);
   }
