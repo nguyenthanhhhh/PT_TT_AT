@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from './order.entity';
-import { Repository } from 'typeorm';
 import { pick } from 'lodash';
+import { Repository } from 'typeorm';
 import {
   LIMIT_DEFAULT,
   OFFSET_DEFAULT,
 } from '../../../common/const/general.const';
-import { AddOrderData } from './dto/request.dto';
-import { Shoes } from '../shoes/shoes.entity';
+import { signData, validateData } from '../../../common/helper/sqrc';
 import { ShoesRefSize } from '../shoes-ref-size/shoesRefSize.entity';
-import { differenceInMinutes } from 'date-fns';
-import { validateSQRC } from '../../../common/helper/sqrc';
+import { Shoes } from '../shoes/shoes.entity';
+import { AddOrderData } from './dto/request.dto';
+import { Order } from './order.entity';
+
+const PI_Merchant = {
+  cardNumber: '1111222233334444',
+  nameOnCard: 'Merchant Name',
+  expired: '12/2030',
+  securityCode: '123',
+};
 
 @Injectable()
 export class OrderService {
@@ -96,7 +102,7 @@ export class OrderService {
     const shoes = await this.shoesRepository.findOne({
       where: {
         isDeleted: false,
-        id: addOrderData.shoesId,
+        id: addOrderData.OI.shoesId,
       },
     });
 
@@ -109,7 +115,7 @@ export class OrderService {
         shoesId: shoes.id,
       })
       .andWhere('rs.size = :size', {
-        size: addOrderData.size,
+        size: addOrderData.OI.size,
       })
       .andWhere('rs.quantity > :value', {
         value: 0,
@@ -126,12 +132,19 @@ export class OrderService {
         HttpStatus.NOT_FOUND,
       );
 
-    const amount = Number(shoes.price * addOrderData.quantity);
+    const amount = Number(shoes.price * addOrderData.OI.quantity);
 
     const timestamp = new Date();
 
+    const isIntactData = validateData({
+      PIMD: addOrderData.PIMD,
+      OI: addOrderData.OI,
+      signature: addOrderData.S,
+    });
+
+    if (!isIntactData) return 0;
     const order = this.orderRepository.create({
-      ...pick(addOrderData, 'quantity', 'size', 'description'),
+      ...pick(addOrderData.OI, 'quantity', 'size', 'description'),
       amount,
       isPaid: false,
       timestamp,
@@ -143,61 +156,76 @@ export class OrderService {
 
     await this.orderRepository.save(order);
     await this.shoesRefSizeRepository.update(refSize.id, {
-      quantity: refSize.quantity - addOrderData.quantity,
+      quantity: refSize.quantity - addOrderData.OI.quantity,
     });
 
-    return order;
+    const H = {
+      PI_Merchant,
+      OI_data: order,
+      PIMD_Buyer: addOrderData.PIMD,
+    };
+
+    const signature = signData(H);
+
+    const SQRCData = {
+      PI_Merchant,
+      OI: order,
+      PIMD: addOrderData.PIMD,
+      signature,
+    };
+
+    return SQRCData;
   }
 
-  async verifyQrCode(data: any) {
-    const order = await this.orderRepository.findOne({
-      where: {
-        id: Number(data.publicData.id),
-        isDeleted: false,
-      },
-      relations: {
-        user: true,
-        shoes: true,
-      },
-    });
+  // async verifyQrCode(data: any) {
+  //   const order = await this.orderRepository.findOne({
+  //     where: {
+  //       id: Number(data.publicData.id),
+  //       isDeleted: false,
+  //     },
+  //     relations: {
+  //       user: true,
+  //       shoes: true,
+  //     },
+  //   });
 
-    const privateData = validateSQRC({
-      publicData: JSON.stringify(data.publicData),
-      encryptedPrivateData: data.encryptedPrivateData,
-      signature: data.signature,
-    });
+  //   const privateData = validateSQRC({
+  //     publicData: JSON.stringify(data.publicData),
+  //     encryptedPrivateData: data.encryptedPrivateData,
+  //     signature: data.signature,
+  //   });
 
-    if (!order) {
-      throw new HttpException('order not found', HttpStatus.NOT_FOUND);
-    }
+  //   if (!order) {
+  //     throw new HttpException('order not found', HttpStatus.NOT_FOUND);
+  //   }
 
-    if (order.isPaid) {
-      throw new HttpException('Qr has been paid', HttpStatus.BAD_REQUEST);
-    }
+  //   if (order.isPaid) {
+  //     throw new HttpException('Qr has been paid', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const currentTime = new Date(); // Lấy thời gian hiện tại
-    const orderTimestamp = new Date(order.timestamp); // Lấy thời gian từ trường timestamp của order
-    const diffInMinutes = differenceInMinutes(currentTime, orderTimestamp); // Tính chênh lệch thời gian
+  //   const currentTime = new Date(); // Lấy thời gian hiện tại
+  //   const orderTimestamp = new Date(order.timestamp); // Lấy thời gian từ trường timestamp của order
+  //   const diffInMinutes = differenceInMinutes(currentTime, orderTimestamp); // Tính chênh lệch thời gian
 
-    if (diffInMinutes > 5) {
-      throw new HttpException('QR code has expired', HttpStatus.BAD_REQUEST);
-    }
+  //   if (diffInMinutes > 5) {
+  //     throw new HttpException('QR code has expired', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const isOrderValid = this.checkOrderValidity(
-      data.publicData,
-      JSON.parse(privateData),
-      order,
-    );
+  //   const isOrderValid = this.checkOrderValidity(
+  //     data.publicData,
+  //     JSON.parse(privateData),
+  //     order,
+  //   );
 
-    if (!isOrderValid) {
-      throw new HttpException(
-        'Order information does not match',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  //   if (!isOrderValid) {
+  //     throw new HttpException(
+  //       'Order information does not match',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
 
-    return order;
-  }
+  //   return order;
+  // }
 
   private checkOrderValidity(
     publicData: any,

@@ -88,11 +88,11 @@ export class ExploreController {
     return this.exploreService.updateTimestamp(param.id);
   }
 
-  @UseGuards(AuthGuard, AuthorGuard)
-  @Post('verify-qr')
-  async verifyOrder(@Body() body: any) {
-    return this.exploreService.verifyQr(body);
-  }
+  // @UseGuards(AuthGuard, AuthorGuard)
+  // @Post('verify-qr')
+  // async verifyOrder(@Body() body: any) {
+  //   return this.exploreService.verifyQr(body);
+  // }
 
   @UseGuards(AuthGuard, AuthorGuard)
   @Get('profile')
