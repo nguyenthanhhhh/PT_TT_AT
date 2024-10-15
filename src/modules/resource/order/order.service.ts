@@ -159,9 +159,16 @@ export class OrderService {
       quantity: refSize.quantity - addOrderData.OI.quantity,
     });
 
+    const OI_data = {
+      quantity: order.quantity,
+      size: order.size,
+      amount: order.amount,
+      timestamp: order.timestamp,
+      shoes: { ...pick(order.shoes, 'name', 'price', 'vendor') },
+    };
     const H = {
       PI_Merchant,
-      OI_data: order,
+      OI_data,
       PIMD_Buyer: addOrderData.PIMD,
     };
 
@@ -169,7 +176,7 @@ export class OrderService {
 
     const SQRCData = {
       PI_Merchant,
-      OI: order,
+      OI: OI_data,
       PIMD: addOrderData.PIMD,
       signature,
     };
