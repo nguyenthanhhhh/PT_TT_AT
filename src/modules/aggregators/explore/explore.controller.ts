@@ -18,7 +18,10 @@ import {
   AddProductData,
   PaidCartData,
 } from '../../resource/cart/dto/request.dto';
-import { AddOrderData } from '../../resource/order/dto/request.dto';
+import {
+  AddOrderData,
+  PaymentOrder,
+} from '../../resource/order/dto/request.dto';
 import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
 
 @Controller('explore')
@@ -80,6 +83,12 @@ export class ExploreController {
   @Post('add-orders')
   async addOrder(@Request() req, @Body() body: AddOrderData) {
     return this.exploreService.addOrder(req.user, body);
+  }
+
+  @UseGuards(AuthGuard, AuthorGuard)
+  @Post('order-payment')
+  async paymentOrder(@Body() body: PaymentOrder) {
+    return this.exploreService.orderPayment(body);
   }
 
   @UseGuards(AuthGuard, AuthorGuard)

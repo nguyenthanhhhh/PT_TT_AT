@@ -1,10 +1,10 @@
+import { Type } from 'class-transformer';
 import {
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
 class Description {
   @IsString()
@@ -46,4 +46,12 @@ export class AddOrderData {
   @ValidateNested()
   @Type(() => OrderInfo)
   OI: OrderInfo;
+}
+
+export class PaymentOrder {
+  @IsNumber()
+  id: number;
+
+  @IsString()
+  description: string;
 }

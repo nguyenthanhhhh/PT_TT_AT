@@ -68,3 +68,9 @@ export const signData = (data: any) => {
   const signature = key.sign(hashedData).toDER('hex');
   return signature;
 };
+
+export function differenceInMinutes(date1: Date, date2: Date): number {
+  const diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime()); // Tính chênh lệch thời gian bằng milliseconds
+  const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60); // Chuyển đổi sang phút
+  return diffInMinutes;
+}

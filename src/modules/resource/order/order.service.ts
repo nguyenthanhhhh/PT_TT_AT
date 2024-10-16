@@ -7,10 +7,14 @@ import {
   LIMIT_DEFAULT,
   OFFSET_DEFAULT,
 } from '../../../common/const/general.const';
-import { signData, validateData } from '../../../common/helper/sqrc';
+import {
+  differenceInMinutes,
+  signData,
+  validateData,
+} from '../../../common/helper/sqrc';
 import { ShoesRefSize } from '../shoes-ref-size/shoesRefSize.entity';
 import { Shoes } from '../shoes/shoes.entity';
-import { AddOrderData } from './dto/request.dto';
+import { AddOrderData, PaymentOrder } from './dto/request.dto';
 import { Order } from './order.entity';
 
 const PI_Merchant = {
@@ -160,6 +164,7 @@ export class OrderService {
     });
 
     const OI_data = {
+      id: order.id,
       quantity: order.quantity,
       size: order.size,
       amount: order.amount,
@@ -184,55 +189,40 @@ export class OrderService {
     return SQRCData;
   }
 
-  // async verifyQrCode(data: any) {
-  //   const order = await this.orderRepository.findOne({
-  //     where: {
-  //       id: Number(data.publicData.id),
-  //       isDeleted: false,
-  //     },
-  //     relations: {
-  //       user: true,
-  //       shoes: true,
-  //     },
-  //   });
+  async orderPayment(data: PaymentOrder) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id: Number(data.id),
+        isDeleted: false,
+      },
+      relations: {
+        user: true,
+        shoes: true,
+      },
+    });
 
-  //   const privateData = validateSQRC({
-  //     publicData: JSON.stringify(data.publicData),
-  //     encryptedPrivateData: data.encryptedPrivateData,
-  //     signature: data.signature,
-  //   });
+    if (!order) {
+      throw new HttpException('order not found', HttpStatus.NOT_FOUND);
+    }
 
-  //   if (!order) {
-  //     throw new HttpException('order not found', HttpStatus.NOT_FOUND);
-  //   }
+    if (order.isPaid) {
+      throw new HttpException('Qr has been paid', HttpStatus.BAD_REQUEST);
+    }
 
-  //   if (order.isPaid) {
-  //     throw new HttpException('Qr has been paid', HttpStatus.BAD_REQUEST);
-  //   }
+    const currentTime = new Date(); // Lấy thời gian hiện tại
+    const orderTimestamp = new Date(order.timestamp); // Lấy thời gian từ trường timestamp của order
+    const diffInMinutes = differenceInMinutes(currentTime, orderTimestamp); // Tính chênh lệch thời gian
 
-  //   const currentTime = new Date(); // Lấy thời gian hiện tại
-  //   const orderTimestamp = new Date(order.timestamp); // Lấy thời gian từ trường timestamp của order
-  //   const diffInMinutes = differenceInMinutes(currentTime, orderTimestamp); // Tính chênh lệch thời gian
+    if (diffInMinutes > 5) {
+      throw new HttpException('QR code has expired', HttpStatus.BAD_REQUEST);
+    }
 
-  //   if (diffInMinutes > 5) {
-  //     throw new HttpException('QR code has expired', HttpStatus.BAD_REQUEST);
-  //   }
+    order.isPaid = true;
+    order.description = data.description;
+    await this.orderRepository.save(order);
 
-  //   const isOrderValid = this.checkOrderValidity(
-  //     data.publicData,
-  //     JSON.parse(privateData),
-  //     order,
-  //   );
-
-  //   if (!isOrderValid) {
-  //     throw new HttpException(
-  //       'Order information does not match',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-
-  //   return order;
-  // }
+    return order;
+  }
 
   private checkOrderValidity(
     publicData: any,

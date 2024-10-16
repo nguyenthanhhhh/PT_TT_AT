@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '../../resource/user/user.service';
-import { RegisterAdminData } from '../../resource/user/dto/request.dto';
-import { ShoesService } from '../../resource/shoes/shoes.service';
-import { CategoryService } from '../../resource/category/category.service';
+import { CartService } from '../../resource/cart/cart.service';
 import {
   AddProductData,
   PaidCartData,
 } from '../../resource/cart/dto/request.dto';
-import { CartService } from '../../resource/cart/cart.service';
+import { CategoryService } from '../../resource/category/category.service';
+import {
+  AddOrderData,
+  PaymentOrder,
+} from '../../resource/order/dto/request.dto';
 import { OrderService } from '../../resource/order/order.service';
-import { AddOrderData } from '../../resource/order/dto/request.dto';
 import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
+import { ShoesService } from '../../resource/shoes/shoes.service';
+import { RegisterAdminData } from '../../resource/user/dto/request.dto';
+import { UserService } from '../../resource/user/user.service';
 
 @Injectable()
 export class ExploreService {
@@ -58,9 +61,9 @@ export class ExploreService {
     return this.orderService.addOrder(user, addOrderData);
   }
 
-  // async verifyQr(data: any) {
-  //   return this.orderService.verifyQrCode(data);
-  // }
+  async orderPayment(data: PaymentOrder) {
+    return this.orderService.orderPayment(data);
+  }
 
   async updateTimestamp(orderId: string) {
     return this.orderService.updateTimestamp(orderId);
