@@ -52,6 +52,6 @@ export class PaymentOrder {
   @IsNumber()
   id: number;
 
-  @IsString()
-  description: string;
+  // @IsString()
+  // description: string;
 }

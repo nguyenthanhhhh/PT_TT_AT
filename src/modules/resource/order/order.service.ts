@@ -96,7 +96,7 @@ export class OrderService {
       take,
       skip,
       order: {
-        id: 'ASC',
+        createdAt: 'DESC',
       },
     });
     return { total, limit: take, offset: skip, data: orders };
@@ -218,28 +218,10 @@ export class OrderService {
     }
 
     order.isPaid = true;
-    order.description = data.description;
+    order.description = 'Payment success';
     await this.orderRepository.save(order);
 
     return order;
-  }
-
-  private checkOrderValidity(
-    publicData: any,
-    privateData: any,
-    order: any,
-  ): boolean {
-    // Kiểm tra các trường cần thiết
-    const isPublicDataValid =
-      order.quantity === publicData.quantity &&
-      order.shoes.id === publicData.shoes.id;
-
-    const isPrivateDataValid =
-      order.user.id === privateData.user.id &&
-      order.user.username === privateData.user.username;
-
-    // Trả về true nếu tất cả thông tin đều hợp lệ
-    return isPublicDataValid && isPrivateDataValid;
   }
 
   async updateTimestamp(orderId: string) {
