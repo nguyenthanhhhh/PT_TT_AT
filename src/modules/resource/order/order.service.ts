@@ -18,10 +18,10 @@ import { AddOrderData, PaymentOrder } from './dto/request.dto';
 import { Order } from './order.entity';
 
 const PI_Merchant = {
-  cardNumber: '1111222233334444',
-  nameOnCard: 'Merchant Name',
-  expired: '12/2030',
-  securityCode: '123',
+  cardNumber: '4000123412345678',
+  nameOnCard: 'Shoe Zone',
+  expired: '06/2028',
+  securityCode: '456',
 };
 
 @Injectable()
@@ -102,11 +102,11 @@ export class OrderService {
     return { total, limit: take, offset: skip, data: orders };
   }
 
-  async addOrder(user: any, addOrderData: AddOrderData) {
+  async createSQRC(user: any, orderData: AddOrderData) {
     const shoes = await this.shoesRepository.findOne({
       where: {
         isDeleted: false,
-        id: addOrderData.OI.shoesId,
+        id: orderData.OI.shoesId,
       },
     });
 
@@ -119,7 +119,7 @@ export class OrderService {
         shoesId: shoes.id,
       })
       .andWhere('rs.size = :size', {
-        size: addOrderData.OI.size,
+        size: orderData.OI.size,
       })
       .andWhere('rs.quantity > :value', {
         value: 0,
@@ -136,19 +136,19 @@ export class OrderService {
         HttpStatus.NOT_FOUND,
       );
 
-    const amount = Number(shoes.price * addOrderData.OI.quantity);
+    const amount = Number(shoes.price * orderData.OI.quantity);
 
     const timestamp = new Date();
 
     const isIntactData = validateData({
-      PIMD: addOrderData.PIMD,
-      OI: addOrderData.OI,
-      signature: addOrderData.S,
+      PIMD: orderData.PIMD,
+      OI: orderData.OI,
+      signature: orderData.S,
     });
 
     if (!isIntactData) return 0;
     const order = this.orderRepository.create({
-      ...pick(addOrderData.OI, 'quantity', 'size', 'description'),
+      ...pick(orderData.OI, 'quantity', 'size', 'description'),
       amount,
       isPaid: false,
       timestamp,
@@ -160,7 +160,7 @@ export class OrderService {
 
     await this.orderRepository.save(order);
     await this.shoesRefSizeRepository.update(refSize.id, {
-      quantity: refSize.quantity - addOrderData.OI.quantity,
+      quantity: refSize.quantity - orderData.OI.quantity,
     });
 
     const OI_data = {
@@ -174,7 +174,7 @@ export class OrderService {
     const H = {
       PI_Merchant,
       OI_data,
-      PIMD_Buyer: addOrderData.PIMD,
+      PIMD_Buyer: orderData.PIMD,
     };
 
     const signature = signData(H);
@@ -182,7 +182,7 @@ export class OrderService {
     const SQRCData = {
       PI_Merchant,
       OI: OI_data,
-      PIMD: addOrderData.PIMD,
+      PIMD: orderData.PIMD,
       signature,
     };
 

@@ -58,7 +58,7 @@ export class ExploreService {
   }
 
   async addOrder(user: any, addOrderData: AddOrderData) {
-    return this.orderService.addOrder(user, addOrderData);
+    return this.orderService.createSQRC(user, addOrderData);
   }
 
   async orderPayment(data: PaymentOrder) {
