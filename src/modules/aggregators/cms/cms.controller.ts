@@ -35,9 +35,7 @@ import {
 
 @Controller('cms')
 export class CmsController {
-  constructor(
-    private readonly cmsService: CmsService,
-  ) {}
+  constructor(private readonly cmsService: CmsService) {}
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('users')
@@ -136,9 +134,7 @@ export class CmsController {
 
   @UseGuards(AuthGuard, AuthorAdminGuard)
   @Get('categories')
-  async getListCategoryForCms(
-    @Query() getCmsCategoryData: GetCmsCategoryData,
-  ) {
+  async getListCategoryForCms(@Query() getCmsCategoryData: GetCmsCategoryData) {
     const result = await this.cmsService.getListCategory(getCmsCategoryData);
 
     return result;

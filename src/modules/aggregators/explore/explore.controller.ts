@@ -20,10 +20,14 @@ import {
 } from '../../resource/cart/dto/request.dto';
 import { AddOrderData } from '../../resource/order/dto/request.dto';
 import { GetCmsShoesData } from '../../resource/shoes/dto/request.dto';
+import { RedisCacheService } from '../../resource/redis/redis-cache.service';
 
 @Controller('explore')
 export class ExploreController {
-  constructor(private readonly exploreService: ExploreService) {}
+  constructor(
+    private readonly exploreService: ExploreService,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
 
   @Post('registers')
   async registerUser(@Body() body: RegisterAdminData) {
@@ -43,7 +47,7 @@ export class ExploreController {
   }
 
   @Get('categories')
-  async getListCategory(@Request() request) {
+  async getListCategory() {
     const result = await this.exploreService.getListCategory();
 
     return result;
@@ -117,7 +121,14 @@ export class ExploreController {
   @UseGuards(AuthGuard, AuthorGuard)
   @Get('orders')
   async getOrders(@Request() request) {
+    const cacheResult = await this.redisCacheService.get(request.url);
+    if (cacheResult) return cacheResult;
+
     const result = await this.exploreService.getListOrderByUser(request?.user);
+
+    await this.redisCacheService.set(request.url, result).catch((error) => {
+      console.log('[getOrders] Set cache error: ', error);
+    });
 
     return result;
   }

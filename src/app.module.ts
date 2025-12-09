@@ -4,6 +4,7 @@ import { DatabaseModule } from './modules/resource/database/database.module';
 import { CmsModule } from './modules/aggregators/cms/cms.module';
 import { AuthModule } from './modules/aggregators/auth/auth.module';
 import { ExploreModule } from './modules/aggregators/explore/explore.module';
+import { RedisCacheModule } from './modules/resource/redis/redis-cache.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ExploreModule } from './modules/aggregators/explore/explore.module';
     CmsModule,
     AuthModule,
     ExploreModule,
+    RedisCacheModule,
   ],
 })
 export class AppModule {}
